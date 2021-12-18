@@ -6,7 +6,9 @@ local games = {
     [2788229376] = "Da Hood",
 }
 
-for _,v in x, s do s[_] = table.concat(v:split(' '), '_') end
+for i,v in next, games do
+    games[i] = table.concat(v:split(' '), '_')
+end
 
-local name = s[game.GameId]
+local name = games[game.GameId]
 return loadstring(game:HttpGet(url.. "/"..(name or "Universal")..".lua", true))()
