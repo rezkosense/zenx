@@ -11,5 +11,5 @@ for i,v in next, games do
 end
 
 local name = games[game.PlaceId] or games[game.GameId]
-if identifyexecutor() == "Fluxus" and name == "Trade_Tower" then loadstring(game:HttpGet('https://raw.githubusercontent.com/laderite/zenx/main/scripts/Trade%20Tower%20Fluxus.lua'))() -- Trade tower script for fluxus users
-else loadstring(game:HttpGet(url.. "/"..(name or "Universal")..".lua"))() end
+if identifyexecutor() == "Fluxus" and name == "Trade_Tower" then return loadstring(game:HttpGet('https://raw.githubusercontent.com/laderite/zenx/main/scripts/Trade%20Tower%20Fluxus.lua'))() end-- Trade tower script for fluxus users
+return loadstring(game:HttpGet(url.. "/"..(name or "Universal")..".lua"))()
