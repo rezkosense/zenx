@@ -5,6 +5,7 @@ local games = {
     [4866692557] = "Age of Gays",
     [2788229376] = "Da Hood",
     [6720959312] = "Loot Quest",
+    [2990100290] = "RPG Simulator",
 }
 
 for i,v in next, games do
