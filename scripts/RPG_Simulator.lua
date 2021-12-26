@@ -30,9 +30,6 @@ end
 function save()
     writefile(FTS .. "/configs/config.json",game:GetService("HttpService"):JSONEncode(Settings))
 end
-for _,v in pairs(Settings) do
-    getgenv()[_] = v
-end
 
 --// functions / settings \\--
 getgenv().speed = 600
@@ -248,3 +245,7 @@ end)
 teleports:Button("Teleport",function()
     game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = workspace.Touchies[selectedteleport].CFrame + Vector3.new(0, 6, 0)
 end)
+-- load allll the settings woohoo
+for _,v in pairs(Settings) do
+    getgenv()[_] = v
+end
