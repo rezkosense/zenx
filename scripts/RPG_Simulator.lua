@@ -58,20 +58,18 @@ end
 --============= RAID FARM (won't do anything if not in a raid) ===============--
 function farmraid()
     if not workspace:FindFirstChild('Touchies') then
-        if getgenv().raidfarm then
-            repeat wait() until (#game:GetService("Workspace"):WaitForChild('Mobs'):GetChildren()) > 0
-            part = game:GetService("Workspace"):WaitForChild('Mobs'):FindFirstChild('Stand') or game:GetService("Workspace"):WaitForChild('Mobs'):FindFirstChildWhichIsA("Model")
-            if part then
-                swing = true
-                repeat
-                    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = part.HumanoidRootPart.CFrame + Vector3.new(0,0,3)
-                    lookAt(game.Players.LocalPlayer.Character, part.HumanoidRootPart)
-                    wait()
-                until abort or part.Humanoid.Health == 0 or not part:IsDescendantOf(game.Workspace.Mobs) or not part.HumanoidRootPart:IsDescendantOf(part) or game.Players.LocalPlayer.Character.Humanoid.Health == 0
-                farmraid()
-                swing = false
-                abort = false
-            end
+        repeat wait() until (#game:GetService("Workspace"):WaitForChild('Mobs'):GetChildren()) > 0
+        part = game:GetService("Workspace"):WaitForChild('Mobs'):FindFirstChild('Stand') or game:GetService("Workspace"):WaitForChild('Mobs'):FindFirstChildWhichIsA("Model")
+        if part then
+            swing = true
+            repeat
+                game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = part.HumanoidRootPart.CFrame + Vector3.new(0,0,3)
+                lookAt(game.Players.LocalPlayer.Character, part.HumanoidRootPart)
+                wait()
+            until abort or part.Humanoid.Health == 0 or not part:IsDescendantOf(game.Workspace.Mobs) or not part.HumanoidRootPart:IsDescendantOf(part) or game.Players.LocalPlayer.Character.Humanoid.Health == 0
+            farmraid()
+            swing = false
+            abort = false
         end
     end
 end
@@ -216,11 +214,12 @@ game.Players.LocalPlayer.CharacterAdded:connect(function()
     farm()
 end)
 coroutine.resume(coroutine.create(function()
-    while wait(0.3) do
+    while wait() do
         if swing then
             swingdasword()
+            wait(0.3)
         end
-    end
+    end        
 end))
 
 coroutine.resume(coroutine.create(function()
@@ -272,7 +271,6 @@ coroutine.resume(coroutine.create(function()
         end
     end
 end))
-end)
 -- load allll the settings woohoo
 for _,v in pairs(Settings) do
     getgenv()[_] = v
