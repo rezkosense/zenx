@@ -1,7 +1,12 @@
 repeat wait() until game:IsLoaded()
+repeat wait() until game:GetService("Players").LocalPlayer:WaitForChild('Loaded').Value == true
+if getgenv().loaded then
+    game.Players.LocalPlayer:Kick("Script already loaded, rejoining..")
+    game:GetService("TeleportService"):Teleport(game.PlaceId, game.Players.LocalPlayer)
+else
 FTS = "ZenXLibv2 - RPG Simulator"
 local ZenLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/laderite/scripts/main/library.lua"))()
-ver = "1.0.0a"
+ver = "1.0.1a"
 local win = ZenLib:New({
 Name = "RPG Simulator - Zen X",
 FolderToSave = FTS
@@ -17,14 +22,15 @@ defaultConfig = {
     autoskill3 = false;
     raidfarm = false;
     raid = "";
-    version = ver
+    raidfarmhardcore = false;
+    version = ver;
 }
 if not isfile(FTS .. "/configs/config.json") then
     writefile(FTS .. "/configs/config.json",game:GetService("HttpService"):JSONEncode(defaultConfig))
 end
 Settings = game:GetService("HttpService"):JSONDecode(readfile(FTS .. "/configs/config.json"))
 if Settings.version ~= ver then
-    delfile(FTS .. "/configs/configs.json")
+    delfile(FTS .. "/configs/config.json")
     writefile(FTS .. "/configs/config.json",game:GetService("HttpService"):JSONEncode(defaultConfig))
 end
 function save()
@@ -32,9 +38,8 @@ function save()
 end
 
 --// functions / settings \\--
-getgenv().speed = 600
 local VirtualInputManager = game:GetService('VirtualInputManager')
-function swing()
+function swingdasword()
     local args = {[1] = "Slash"}
     game:GetService("ReplicatedStorage").Events.attack:FireServer(unpack(args))
     local args = {[1] = "T"}
@@ -42,30 +47,43 @@ function swing()
     local args = {[1] = "E"}
     game:GetService("ReplicatedStorage").Events.attack:FireServer(unpack(args))
 end
+function lookAt(chr,target) -- found this func somewhere
+    if chr.PrimaryPart then 
+        local chrPos=chr.PrimaryPart.Position 
+        local tPos=target.Position 
+        local newCF=CFrame.new(chrPos,tPos) 
+        chr:SetPrimaryPartCFrame(newCF)
+    end
+end
 --============= RAID FARM (won't do anything if not in a raid) ===============--
-function raidfarm()
-    if not workspace:FindFirstChild('Touchies') then -- see if we are in a raid or not
-        boss = workspace.BossSETTINGS:WaitForChild('Boss').Value
-        if boss then
-            part = workspace.Mobs:WaitForChild(boss)
-            local Time = (part.HumanoidRootPart.Position + Vector3.new(0, 0, 3) - game.Players.LocalPlayer.Character:WaitForChild('HumanoidRootPart').Position).Magnitude / getgenv().speed
-            local Info = TweenInfo.new(Time, Enum.EasingStyle.Linear)
-            local Tween = game:GetService("TweenService"):Create(game.Players.LocalPlayer.Character:WaitForChild('HumanoidRootPart'), Info, {CFrame = CFrame.new(part.HumanoidRootPart.Position + Vector3.new(0, 0, 3))})
-            Tween:Play()
-            Tween.Completed:Connect(function()
+function farmraid()
+    if not workspace:FindFirstChild('Touchies') then
+        if getgenv().raidfarm then
+            repeat wait() until (#game:GetService("Workspace"):WaitForChild('Mobs'):GetChildren()) > 0
+            part = game:GetService("Workspace"):WaitForChild('Mobs'):FindFirstChild('Stand') or game:GetService("Workspace"):WaitForChild('Mobs'):FindFirstChildWhichIsA("Model")
+            if part then
+                swing = true
                 repeat
-                    swing()
-                    wait(0.4) -- delay is needed as if you attack too quickly u get banned
-                until part.Humanoid.Health == 0 or not part:IsDescendantOf(game.Workspace.Mobs) or not part.HumanoidRootPart:IsDescendantOf(part) or game.Players.LocalPlayer.Character.Humanoid.Health == 0
-            end)
+                    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = part.HumanoidRootPart.CFrame + Vector3.new(0,0,3)
+                    lookAt(game.Players.LocalPlayer.Character, part.HumanoidRootPart)
+                    wait()
+                until abort or part.Humanoid.Health == 0 or not part:IsDescendantOf(game.Workspace.Mobs) or not part.HumanoidRootPart:IsDescendantOf(part) or game.Players.LocalPlayer.Character.Humanoid.Health == 0
+                farmraid()
+                swing = false
+                abort = false
+            end
         end
     end
 end
-raidfarm()
-
 game.Players.LocalPlayer.CharacterAdded:Connect(function()
     if not workspace:FindFirstChild('Touchies') then -- see if we are in a raid or not
-        raidfarm()
+        farmraid()
+    end
+end)
+workspace:WaitForChild('Mobs').ChildAdded:Connect(function(v)
+    if v.Name == "Stand" then
+        abort = true
+        farmraid()
     end
 end)
 
@@ -94,23 +112,19 @@ function getMobs()
 end
 function farm()
     if getgenv().autofarm then
-        part = gettarget(mob)
+        part = gettarget(getgenv().mob)
         if part then
-            local Time = (part.HumanoidRootPart.Position + Vector3.new(0, 0, 3) - game.Players.LocalPlayer.Character:WaitForChild('HumanoidRootPart').Position).Magnitude / getgenv().speed
-            local Info = TweenInfo.new(Time, Enum.EasingStyle.Linear)
-            local Tween = game:GetService("TweenService"):Create(game.Players.LocalPlayer.Character:WaitForChild('HumanoidRootPart'), Info, {CFrame = CFrame.new(part.HumanoidRootPart.Position + Vector3.new(0, 0, 3))})
-            Tween:Play()
-            Tween.Completed:Connect(function()
-                repeat
-                    swing()
-                    wait(0.5) -- delay is needed as if you attack too quickly u get banned
-                until part.Humanoid.Health == 0 or not part:IsDescendantOf(game.Workspace.Mobs) or not part.HumanoidRootPart:IsDescendantOf(part) or game.Players.LocalPlayer.Character.Humanoid.Health == 0
-                farm()
-            end)
+            swing = true
+            repeat
+                game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = part.HumanoidRootPart.CFrame + Vector3.new(0,0,3)
+                lookAt(game.Players.LocalPlayer.Character, part.HumanoidRootPart)
+                wait()
+            until part.Humanoid.Health == 0 or not part:IsDescendantOf(game.Workspace.Mobs) or not part.HumanoidRootPart:IsDescendantOf(part) or game.Players.LocalPlayer.Character.Humanoid.Health == 0
+            swing = false
+            farm()
         end
     end
 end
-
 function getTeleports()
     tp = {}
     pcall(function()
@@ -129,6 +143,85 @@ function getRaids()
     end)
     return raids
 end
+
+-- UI
+
+local auto = win:Tab("Main")
+
+local autofarm = auto:Section("Auto Farm")
+local autoskill = auto:Section("Auto Skill")
+local raidfarm = auto:Section("Raid Farm")
+local teleports = auto:Section("Teleports")
+
+autofarm:Toggle("Auto Farm",Settings.autofarm,"Toggle",function(v)
+    getgenv().autofarm = v
+    Settings.autofarm = v
+    save()
+    farm()
+end)
+local mob = autofarm:Dropdown("Select Mob",getMobs(),Settings.mob,"Dropdown", function(v)
+    getgenv().mob = v
+    Settings.mob = v
+    save()
+end)
+autofarm:Toggle("Auto drink potions",Settings.drink,"Toggle",function(v)
+    getgenv().drink = v
+    Settings.drink = v
+    save()
+end)
+
+autoskill:Toggle("Auto Skill 1",Settings.autoskill1,"Toggle",function(v)
+    getgenv().autoskill1 = v
+    Settings.autoskill1 = v
+    save()
+end)
+autoskill:Toggle("Auto Skill 2",Settings.autoskill2,"Toggle",function(v)
+    getgenv().autoskill2 = v
+    Settings.autoskill2 = v
+    save()
+end)
+autoskill:Toggle("Auto Skill 3",Settings.autoskill3,"Toggle",function(v)
+    getgenv().autoskill3 = v
+    Settings.autoskill3 = v
+    save()
+end)
+
+raidfarm:Toggle("Raid Farm",Settings.raidfarm,"Toggle",function(v)
+    getgenv().raidfarm = v
+    Settings.raidfarm = v
+    save()
+end)
+
+raidfarm:Toggle("Raid Farm: Hardcore?",Settings.raidfarmhardcore,"Toggle",function(v)
+    getgenv().raidfarmhardcore = v
+    Settings.raidfarmhardcore = v
+    save()
+end)
+
+local rf = raidfarm:Dropdown("Select Raid",getRaids(),Settings.raid,"Dropdown",function(v)
+    getgenv().raid = v
+    Settings.raid = v
+    save()
+end)
+
+local teleport = teleports:Dropdown("Select TP",getTeleports(),"","Dropdown",function(v)
+    selectedteleport = v
+end)
+
+teleports:Button("Teleport",function()
+    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = workspace.Touchies[selectedteleport].CFrame + Vector3.new(0, 6, 0)
+end)
+game.Players.LocalPlayer.CharacterAdded:connect(function()
+    wait(1)
+    farm()
+end)
+coroutine.resume(coroutine.create(function()
+    while wait(0.3) do
+        if swing then
+            swingdasword()
+        end
+    end
+end))
 
 coroutine.resume(coroutine.create(function()
     while wait(1) do
@@ -171,7 +264,7 @@ coroutine.resume(coroutine.create(function()
                 local args = {
                     [1] = "Raid",
                     [2] = getgenv().raid,
-                    [3] = false
+                    [3] = getgenv().raidfarmhardcore or false
                 }
                 
                 game:GetService("ReplicatedStorage").Events.raidEvent:FireServer(unpack(args))
@@ -179,73 +272,12 @@ coroutine.resume(coroutine.create(function()
         end
     end
 end))
-
-game.Players.LocalPlayer.CharacterAdded:connect(function()
-    wait(1)
-    farm()
-end)
--- UI
-
-local auto = win:Tab("Main")
-
-local autofarm = auto:Section("Auto Farm")
-local autoskill = auto:Section("Auto Skill")
-local raidfarm = auto:Section("Raid Farm")
-local teleports = auto:Section("Teleports")
-
-autofarm:Toggle("Auto Farm",Settings.autofarm,"Toggle",function(v)
-    getgenv().autofarm = v
-    Settings.autofarm = v
-    save()
-    farm()
-end)
-local mob = autofarm:Dropdown("Select Mob",getMobs(),Settings.mob,"Dropdown", function(v)
-    mob = v
-    Settings.mob = v
-    save()
-end)
-autofarm:Toggle("Auto drink potions",Settings.drink,"Toggle",function(v)
-    getgenv().drink = v
-    Settings.drink = v
-    save()
-end)
-
-autoskill:Toggle("Auto Skill 1",Settings.autoskill1,"Toggle",function(v)
-    getgenv().autoskill1 = v
-    Settings.autoskill1 = v
-    save()
-end)
-autoskill:Toggle("Auto Skill 2",Settings.autoskill2,"Toggle",function(v)
-    getgenv().autoskill2 = v
-    Settings.autoskill2 = v
-    save()
-end)
-autoskill:Toggle("Auto Skill 3",Settings.autoskill3,"Toggle",function(v)
-    getgenv().autoskill3 = v
-    Settings.autoskill3 = v
-    save()
-end)
-
-raidfarm:Toggle("Raid Farm",Settings.raidfarm,"Toggle",function(v)
-    getgenv().raidfarm = v
-    Settings.raidfarm = v
-    save()
-end)
-
-local rf = raidfarm:Dropdown("Select Raid",getRaids(),Settings.raid,"Dropdown",function(v)
-    getgenv().raid = v
-    Settings.raid = v
-    save()
-end)
-
-local teleport = teleports:Dropdown("Select TP",getTeleports(),"","Dropdown",function(v)
-    selectedteleport = v
-end)
-
-teleports:Button("Teleport",function()
-    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = workspace.Touchies[selectedteleport].CFrame + Vector3.new(0, 6, 0)
 end)
 -- load allll the settings woohoo
 for _,v in pairs(Settings) do
     getgenv()[_] = v
+end
+farm()
+farmraid()
+getgenv().loaded = true
 end
