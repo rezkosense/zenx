@@ -57,29 +57,34 @@ function lookAt(chr,target) -- found this func somewhere
 end
 --============= RAID FARM (won't do anything if not in a raid) ===============--
 function farmraid()
-    if not workspace:FindFirstChild('Touchies') then
-        repeat wait() until (#game:GetService("Workspace"):WaitForChild('Mobs'):GetChildren()) > 0
-        part = game:GetService("Workspace"):WaitForChild('Mobs'):FindFirstChild('Stand') or game:GetService("Workspace"):WaitForChild('Mobs'):FindFirstChildWhichIsA("Model")
-        if part then
-            swing = true
-            repeat
-                game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = part.HumanoidRootPart.CFrame + Vector3.new(0,0,3)
-                lookAt(game.Players.LocalPlayer.Character, part.HumanoidRootPart)
+    if not workspace:FindFirstChild('W1') then
+        if getgenv().raidfarm then
+            part = game:GetService("Workspace"):WaitForChild('Mobs'):FindFirstChild('Crystal') or game:GetService("Workspace"):WaitForChild('Mobs'):FindFirstChild('Stand') or game:GetService("Workspace"):WaitForChild('Mobs'):FindFirstChildWhichIsA("Model")
+            if part then
+                swing = true
+                repeat
+                    game.Players.LocalPlayer.Character:WaitForChild('HumanoidRootPart').CFrame = part.HumanoidRootPart.CFrame + Vector3.new(0,0,3)
+                    lookAt(game.Players.LocalPlayer.Character, part.HumanoidRootPart)
+                    wait()
+                until abort or part.Humanoid.Health == 0 or not part:IsDescendantOf(game.Workspace.Mobs) or not part.HumanoidRootPart:IsDescendantOf(part) or game.Players.LocalPlayer.Character.Humanoid.Health == 0
+                swing = false
+                abort = false
+                farmraid()
+            else
                 wait()
-            until abort or part.Humanoid.Health == 0 or not part:IsDescendantOf(game.Workspace.Mobs) or not part.HumanoidRootPart:IsDescendantOf(part) or game.Players.LocalPlayer.Character.Humanoid.Health == 0
-            farmraid()
-            swing = false
-            abort = false
+                farmraid()
+            end
         end
     end
 end
 game.Players.LocalPlayer.CharacterAdded:Connect(function()
-    if not workspace:FindFirstChild('Touchies') then -- see if we are in a raid or not
+    if not workspace:FindFirstChild('W1') then -- see if we are in a raid or not
         farmraid()
     end
 end)
-workspace:WaitForChild('Mobs').ChildAdded:Connect(function(v)
-    if v.Name == "Stand" then
+
+workspace:WaitForChild('Mobs').ChildAdded:Connect(function(v) -- sets the target to kill the crystal/shard in shadow palace/crystal caverns
+    if v.Name == "Stand" or v.Name == "Crystal" then
         abort = true
         farmraid()
     end
@@ -116,7 +121,7 @@ function farm()
             repeat
                 game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = part.HumanoidRootPart.CFrame + Vector3.new(0,0,3)
                 lookAt(game.Players.LocalPlayer.Character, part.HumanoidRootPart)
-                wait()
+                wait(0.3)
             until part.Humanoid.Health == 0 or not part:IsDescendantOf(game.Workspace.Mobs) or not part.HumanoidRootPart:IsDescendantOf(part) or game.Players.LocalPlayer.Character.Humanoid.Health == 0
             swing = false
             farm()
@@ -190,18 +195,6 @@ raidfarm:Toggle("Raid Farm",Settings.raidfarm,"Toggle",function(v)
     save()
 end)
 
-raidfarm:Toggle("Raid Farm: Hardcore?",Settings.raidfarmhardcore,"Toggle",function(v)
-    getgenv().raidfarmhardcore = v
-    Settings.raidfarmhardcore = v
-    save()
-end)
-
-local rf = raidfarm:Dropdown("Select Raid",getRaids(),Settings.raid,"Dropdown",function(v)
-    getgenv().raid = v
-    Settings.raid = v
-    save()
-end)
-
 local teleport = teleports:Dropdown("Select TP",getTeleports(),"","Dropdown",function(v)
     selectedteleport = v
 end)
@@ -253,21 +246,6 @@ coroutine.resume(coroutine.create(function()
     while wait(1) do
         if getgenv().drink then
             game:GetService("ReplicatedStorage").Events.drink:FireServer()
-        end
-    end
-end))
-coroutine.resume(coroutine.create(function()
-    while wait(1) do
-        if getgenv().raidfarm then
-            if workspace:FindFirstChild('Touchies') then
-                local args = {
-                    [1] = "Raid",
-                    [2] = getgenv().raid,
-                    [3] = getgenv().raidfarmhardcore or false
-                }
-                
-                game:GetService("ReplicatedStorage").Events.raidEvent:FireServer(unpack(args))
-            end
         end
     end
 end))
