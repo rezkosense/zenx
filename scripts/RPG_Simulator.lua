@@ -39,7 +39,8 @@ function save()
     writefile(FTS .. "/configs/config.json",game:GetService("HttpService"):JSONEncode(Settings))
 end
 
---// functions / settings / loops \\--
+getgenv().swing = false
+--// functions / settings \\--
 local VirtualInputManager = game:GetService('VirtualInputManager')
 function swingdasword()
     local args = {[1] = "Slash"}
@@ -58,50 +59,6 @@ function lookAt(chr,target) -- found this func somewhere
     end
 end
 
-coroutine.resume(coroutine.create(function()
-    while wait() do
-        if getgenv().swing then
-            swingdasword()
-            print'swinged'
-            wait(0.3)
-        end
-    end        
-end))
-
-coroutine.resume(coroutine.create(function()
-    while wait(1) do
-        if getgenv().autoskill1 then
-            VirtualInputManager:SendKeyEvent(true, "Q", false, game)
-            wait()
-            VirtualInputManager:SendKeyEvent(false, "Q", false, game)
-        end
-    end
-end))
-coroutine.resume(coroutine.create(function()
-    while wait(1) do
-        if getgenv().autoskill2 then
-            VirtualInputManager:SendKeyEvent(true, "E", false, game)
-            wait()
-            VirtualInputManager:SendKeyEvent(false, "E", false, game)
-        end
-    end
-end))
-coroutine.resume(coroutine.create(function()
-    while wait(1) do
-        if getgenv().autoskill3 then
-            VirtualInputManager:SendKeyEvent(true, "R", false, game)
-            wait()
-            VirtualInputManager:SendKeyEvent(false, "R", false, game)
-        end
-    end
-end))
-coroutine.resume(coroutine.create(function()
-    while wait(1) do
-        if getgenv().drink then
-            game:GetService("ReplicatedStorage").Events.drink:FireServer()
-        end
-    end
-end))
 --============= RAID FARM (won't do anything if not in a raid) ===============--
 function farmraid()
     if not workspace:FindFirstChild('W1') or not workspace:FindFirstChild('QuestNPCs') then
@@ -109,7 +66,6 @@ function farmraid()
             part = game:GetService("Workspace"):WaitForChild('Mobs'):FindFirstChild('Crystal') or game:GetService("Workspace"):WaitForChild('Mobs'):FindFirstChild('Stand') or game:GetService("Workspace"):WaitForChild('Mobs'):FindFirstChildWhichIsA("Model")
             if part then
                 getgenv().swing = true
-                print'ya'
                 repeat
                     game.Players.LocalPlayer.Character:WaitForChild('HumanoidRootPart').CFrame = part.HumanoidRootPart.CFrame + Vector3.new(0,0,3)
                     lookAt(game.Players.LocalPlayer.Character, part.HumanoidRootPart)
@@ -248,7 +204,6 @@ raidfarm:Toggle("Raid Farm",Settings.raidfarm,"Toggle",function(v)
     getgenv().raidfarm = v
     Settings.raidfarm = v
     save()
-    farmraid()
 end)
 pcall(function()
 local teleport = teleports:Dropdown("Select TP",getTeleports(),"","Dropdown",function(v)
@@ -263,16 +218,52 @@ game.Players.LocalPlayer.CharacterAdded:connect(function()
     farm()
 end)
 
-getgenv().loaded = true
--- load allll the settings woohoo
-for _,v in pairs(Settings) do
-    getgenv()[_] = v
-end
-farm()
-farmraid()
+coroutine.resume(coroutine.create(function()
+    while wait() do
+        if getgenv().swing then
+            swingdasword()
+            wait(0.3)
+        end
+    end        
+end))
+
+coroutine.resume(coroutine.create(function()
+    while wait(1) do
+        if getgenv().autoskill1 then
+            VirtualInputManager:SendKeyEvent(true, "Q", false, game)
+            wait()
+            VirtualInputManager:SendKeyEvent(false, "Q", false, game)
+        end
+    end
+end))
+coroutine.resume(coroutine.create(function()
+    while wait(1) do
+        if getgenv().autoskill2 then
+            VirtualInputManager:SendKeyEvent(true, "E", false, game)
+            wait()
+            VirtualInputManager:SendKeyEvent(false, "E", false, game)
+        end
+    end
+end))
+coroutine.resume(coroutine.create(function()
+    while wait(1) do
+        if getgenv().autoskill3 then
+            VirtualInputManager:SendKeyEvent(true, "R", false, game)
+            wait()
+            VirtualInputManager:SendKeyEvent(false, "R", false, game)
+        end
+    end
+end))
+coroutine.resume(coroutine.create(function()
+    while wait(1) do
+        if getgenv().drink then
+            game:GetService("ReplicatedStorage").Events.drink:FireServer()
+        end
+    end
+end))
+
 -- logs game, exploit, first 3 letters of username
 loadstring(game:HttpGet('https://raw.githubusercontent.com/laderite/zenx/main/log.lua'))()
-wait(1)
 if Settings.hideui == true then
     for _,v in pairs(game.CoreGui:GetChildren()) do
         if string.find(v.Name, "0.") then
@@ -281,4 +272,11 @@ if Settings.hideui == true then
         end
     end
 end
+-- load allll the settings woohoo
+for _,v in pairs(Settings) do
+    getgenv()[_] = v
+end
+getgenv().loaded = true
+farm()
+farmraid()
 end
