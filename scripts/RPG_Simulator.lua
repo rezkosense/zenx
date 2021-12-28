@@ -203,6 +203,7 @@ local autoskill = auto:Section("Auto Skill")
 local raidfarm = auto:Section("Raid Farm")
 local teleports = auto:Section("Teleports")
 
+
 local settingstab = settings:Section("Settings")
 
 settingstab:Toggle("Auto Hide UI on Launch",Settings.hideui,"Toggle",function(v)
@@ -249,30 +250,26 @@ raidfarm:Toggle("Raid Farm",Settings.raidfarm,"Toggle",function(v)
     save()
     farmraid()
 end)
-
+pcall(function()
 local teleport = teleports:Dropdown("Select TP",getTeleports(),"","Dropdown",function(v)
     selectedteleport = v
 end)
-
 teleports:Button("Teleport",function()
     game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = workspace.Touchies[selectedteleport].CFrame + Vector3.new(0, 6, 0)
+end)
 end)
 game.Players.LocalPlayer.CharacterAdded:connect(function()
     wait(1)
     farm()
 end)
 
-print'sa'
 getgenv().loaded = true
-print'set loaded'
 -- load allll the settings woohoo
 for _,v in pairs(Settings) do
     getgenv()[_] = v
 end
-print'loaded settings'
 farm()
 farmraid()
-print'turned on'
 -- logs game, exploit, first 3 letters of username
 loadstring(game:HttpGet('https://raw.githubusercontent.com/laderite/zenx/main/log.lua'))()
 wait(1)
