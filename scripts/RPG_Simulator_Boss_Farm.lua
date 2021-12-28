@@ -104,4 +104,11 @@ end))
 
 -- logs game, exploit, first 3 letters of username
 loadstring(game:HttpGet('https://raw.githubusercontent.com/laderite/zenx/main/log.lua'))()
+
+setclipboard("https://discord.com/invite/mwfAyYZ57P")
+game.StarterGui:SetCore("SendNotification", {
+Title = "Discord";
+Text = "automatically copied link kek";
+Duration = math.huge;
+})
 farmraid()
