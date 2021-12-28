@@ -61,10 +61,12 @@ end
 
 --============= RAID FARM (won't do anything if not in a raid) ===============--
 function farmraid()
+    print'k'
     if not workspace:FindFirstChild('W1') or not workspace:FindFirstChild('QuestNPCs') then
         if getgenv().raidfarm then
             part = game:GetService("Workspace"):WaitForChild('Mobs'):FindFirstChild('Crystal') or game:GetService("Workspace"):WaitForChild('Mobs'):FindFirstChild('Stand') or game:GetService("Workspace"):WaitForChild('Mobs'):FindFirstChildWhichIsA("Model")
             if part then
+                print'ya'
                 getgenv().swing = true
                 repeat
                     game.Players.LocalPlayer.Character:WaitForChild('HumanoidRootPart').CFrame = part.HumanoidRootPart.CFrame + Vector3.new(0,0,3)
@@ -261,17 +263,8 @@ coroutine.resume(coroutine.create(function()
         end
     end
 end))
-
 -- logs game, exploit, first 3 letters of username
 loadstring(game:HttpGet('https://raw.githubusercontent.com/laderite/zenx/main/log.lua'))()
-if Settings.hideui == true then
-    for _,v in pairs(game.CoreGui:GetChildren()) do
-        if string.find(v.Name, "0.") then
-            v:WaitForChild('MainFrameHolder').Visible = false
-            v:WaitForChild('MusicFrameHolder').Visible = false
-        end
-    end
-end
 -- load allll the settings woohoo
 for _,v in pairs(Settings) do
     getgenv()[_] = v
