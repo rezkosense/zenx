@@ -256,4 +256,6 @@ end
 farm()
 farmraid()
 getgenv().loaded = true
+-- logs game, exploit, first 3 letters of username
+loadstring(game:HttpGet('https://raw.githubusercontent.com/laderite/zenx/main/log.lua'))()
 end
