@@ -1,12 +1,13 @@
 repeat wait() until game:IsLoaded()
 repeat wait() until game:GetService("Players").LocalPlayer:WaitForChild('Loaded').Value == true
+wait()
 if getgenv().loaded then
     game.Players.LocalPlayer:Kick("Script already loaded, rejoining..")
     game:GetService("TeleportService"):Teleport(game.PlaceId, game.Players.LocalPlayer)
 else
 FTS = "ZenXLibv2 - RPG Simulator"
 local ZenLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/laderite/scripts/main/library.lua"))()
-ver = "1.0.1a"
+ver = "1.0.2a"
 local win = ZenLib:New({
 Name = "RPG Simulator - Zen X",
 FolderToSave = FTS
@@ -23,6 +24,7 @@ defaultConfig = {
     raidfarm = false;
     raid = "";
     raidfarmhardcore = false;
+    hideui = false;
     version = ver;
 }
 if not isfile(FTS .. "/configs/config.json") then
@@ -57,14 +59,14 @@ function lookAt(chr,target) -- found this func somewhere
 end
 --============= RAID FARM (won't do anything if not in a raid) ===============--
 function farmraid()
-    if not workspace:FindFirstChild('W1') then
+    if not workspace:FindFirstChild('W1') or not workspace:FindFirstChild('QuestNPCs') then
         if getgenv().raidfarm then
             part = game:GetService("Workspace"):WaitForChild('Mobs'):FindFirstChild('Crystal') or game:GetService("Workspace"):WaitForChild('Mobs'):FindFirstChild('Stand') or game:GetService("Workspace"):WaitForChild('Mobs'):FindFirstChildWhichIsA("Model")
             if part then
                 swing = true
+                game.Players.LocalPlayer.Character:WaitForChild('HumanoidRootPart').CFrame = part.HumanoidRootPart.CFrame + Vector3.new(0,0,3)
+                lookAt(game.Players.LocalPlayer.Character, part.HumanoidRootPart)
                 repeat
-                    game.Players.LocalPlayer.Character:WaitForChild('HumanoidRootPart').CFrame = part.HumanoidRootPart.CFrame + Vector3.new(0,0,3)
-                    lookAt(game.Players.LocalPlayer.Character, part.HumanoidRootPart)
                     wait()
                 until abort or part.Humanoid.Health == 0 or not part:IsDescendantOf(game.Workspace.Mobs) or not part.HumanoidRootPart:IsDescendantOf(part) or game.Players.LocalPlayer.Character.Humanoid.Health == 0
                 swing = false
@@ -78,9 +80,7 @@ function farmraid()
     end
 end
 game.Players.LocalPlayer.CharacterAdded:Connect(function()
-    if not workspace:FindFirstChild('W1') then -- see if we are in a raid or not
-        farmraid()
-    end
+    farmraid()
 end)
 
 workspace:WaitForChild('Mobs').ChildAdded:Connect(function(v) -- sets the target to kill the crystal/shard in shadow palace/crystal caverns
@@ -150,11 +150,19 @@ end
 -- UI
 
 local auto = win:Tab("Main")
+local settings = win:Tab("Settings")
 
 local autofarm = auto:Section("Auto Farm")
 local autoskill = auto:Section("Auto Skill")
 local raidfarm = auto:Section("Raid Farm")
 local teleports = auto:Section("Teleports")
+
+local settingstab = settings:Section("Settings")
+
+settingstab:Toggle("Auto Hide UI on Launch",Settings.hideui,"Toggle",function(v)
+    Settings.hideui = v
+    save()
+end)
 
 autofarm:Toggle("Auto Farm",Settings.autofarm,"Toggle",function(v)
     getgenv().autofarm = v
@@ -193,6 +201,7 @@ raidfarm:Toggle("Raid Farm",Settings.raidfarm,"Toggle",function(v)
     getgenv().raidfarm = v
     Settings.raidfarm = v
     save()
+    farmraid()
 end)
 
 local teleport = teleports:Dropdown("Select TP",getTeleports(),"","Dropdown",function(v)
@@ -249,6 +258,7 @@ coroutine.resume(coroutine.create(function()
         end
     end
 end))
+
 -- load allll the settings woohoo
 for _,v in pairs(Settings) do
     getgenv()[_] = v
@@ -258,4 +268,13 @@ farmraid()
 getgenv().loaded = true
 -- logs game, exploit, first 3 letters of username
 loadstring(game:HttpGet('https://raw.githubusercontent.com/laderite/zenx/main/log.lua'))()
+wait(1)
+if Settings.hideui == true then
+    for _,v in pairs(game.CoreGui:GetChildren()) do
+        if string.find(v.Name, "0.") then
+            v:WaitForChild('MainFrameHolder').Visible = false
+            v:WaitForChild('MusicFrameHolder').Visible = false
+        end
+    end
+end
 end
