@@ -30,7 +30,7 @@ function lookAt(chr,target) -- found this func somewhere
     end
 end
 function farmraid()
-    if not workspace:FindFirstChild('W1') then
+    if not workspace:FindFirstChild('W1') and not workspace:FindFirstChild('QuestNPCs') then
             part = game:GetService("Workspace"):WaitForChild('Mobs'):FindFirstChild('Crystal') or game:GetService("Workspace"):WaitForChild('Mobs'):FindFirstChild('Stand') or game:GetService("Workspace"):WaitForChild('Mobs'):FindFirstChildWhichIsA("Model")
             if part then
                 swing = true
