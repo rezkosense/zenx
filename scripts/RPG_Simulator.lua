@@ -61,12 +61,10 @@ end
 
 --============= RAID FARM (won't do anything if not in a raid) ===============--
 function farmraid()
-    print'k'
-    if not workspace:FindFirstChild('W1') or not workspace:FindFirstChild('QuestNPCs') then
+    if not workspace:FindFirstChild('W1') and not workspace:FindFirstChild('QuestNPCs') then
         if getgenv().raidfarm then
             part = game:GetService("Workspace"):WaitForChild('Mobs'):FindFirstChild('Crystal') or game:GetService("Workspace"):WaitForChild('Mobs'):FindFirstChild('Stand') or game:GetService("Workspace"):WaitForChild('Mobs'):FindFirstChildWhichIsA("Model")
             if part then
-                print'ya'
                 getgenv().swing = true
                 repeat
                     game.Players.LocalPlayer.Character:WaitForChild('HumanoidRootPart').CFrame = part.HumanoidRootPart.CFrame + Vector3.new(0,0,3)
@@ -121,13 +119,13 @@ function farm()
     if getgenv().autofarm then
         part = gettarget(getgenv().mob)
         if part then
-            swing = true
+            getgenv().swing = true
             repeat
                 game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = part.HumanoidRootPart.CFrame + Vector3.new(0,0,3)
                 lookAt(game.Players.LocalPlayer.Character, part.HumanoidRootPart)
                 wait(0.3)
             until part.Humanoid.Health == 0 or not part:IsDescendantOf(game.Workspace.Mobs) or not part.HumanoidRootPart:IsDescendantOf(part) or game.Players.LocalPlayer.Character.Humanoid.Health == 0
-            swing = false
+            getgenv().swing = false
             farm()
         end
     end
