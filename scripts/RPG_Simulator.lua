@@ -167,6 +167,10 @@ settingstab:Toggle("Auto Hide UI on Launch",Settings.hideui,"Toggle",function(v)
     save()
 end)
 
+settingstab:Button("Copy discord link",function()
+    setclipboard("https://discord.com/invite/mwfAyYZ57P")
+end)
+
 autofarm:Toggle("Auto Farm",Settings.autofarm,"Toggle",function(v)
     getgenv().autofarm = v
     Settings.autofarm = v
@@ -263,6 +267,7 @@ coroutine.resume(coroutine.create(function()
 end))
 -- logs game, exploit, first 3 letters of username
 loadstring(game:HttpGet('https://raw.githubusercontent.com/laderite/zenx/main/log.lua'))()
+ZenLib:Notification('DISCORD',"https://discord.com/invite/mwfAyYZ57P for updates/info/bossfarm script")
 -- load allll the settings woohoo
 for _,v in pairs(Settings) do
     getgenv()[_] = v
