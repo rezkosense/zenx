@@ -7,7 +7,7 @@ getgenv().raidsettings = {
     ["autodrinkpotions"] = true,
     ["farmsettings"] = {
         ["autoswing"] = true,
-        ["range"] = 10
+        ["range"] = 7
     },
     ["autoskill"] = {
         ["autoskill1"] = true,
@@ -39,15 +39,17 @@ function farmraid()
         game:GetService("Workspace"):WaitForChild('Mobs'):FindFirstChild('Stand') or 
         game:GetService("Workspace"):WaitForChild('Mobs'):FindFirstChildWhichIsA("Model")
         if part then
-            if getgenv().raidsettings['farmsettings']['autoswing'] then swing = true end
-            repeat
-                game.Players.LocalPlayer.Character:WaitForChild('HumanoidRootPart').CFrame = part.HumanoidRootPart.CFrame + Vector3.new(0,0,getgenv().raidsettings['farmsettings']['range'])
-                lookAt(game.Players.LocalPlayer.Character, part.HumanoidRootPart)
-                task.wait()
-            until abort or part.Humanoid.Health == 0 or not part:IsDescendantOf(game.Workspace.Mobs) or not part.HumanoidRootPart:IsDescendantOf(part) or game.Players.LocalPlayer.Character.Humanoid.Health == 0
-            swing = false
-            abort = false
-            farmraid()
+            pcall(function()
+                if getgenv().raidsettings['farmsettings']['autoswing'] then swing = true end
+                repeat
+                    game.Players.LocalPlayer.Character:WaitForChild('HumanoidRootPart').CFrame = part.HumanoidRootPart.CFrame + Vector3.new(0,0,getgenv().raidsettings['farmsettings']['range'])
+                    lookAt(game.Players.LocalPlayer.Character, part.HumanoidRootPart)
+                    task.wait()
+                until abort or not part:IsDescendantOf(game.Workspace.Mobs) or not part.HumanoidRootPart:IsDescendantOf(part) or game.Players.LocalPlayer.Character:FindFirstChild('Humanoid').Health == 0 or part:FindFirstChild('Humanoid').Health == 0
+                swing = false
+                abort = false
+                farmraid()
+            end)
         else
             wait()
             farmraid()
@@ -79,11 +81,13 @@ coroutine.resume(coroutine.create(function()
             wait()
             VirtualInputManager:SendKeyEvent(false, "Q", false, game)
         end
+        wait()
         if getgenv().raidsettings['autoskill']['autoskill2'] and not workspace:FindFirstChild('W1') and not workspace:FindFirstChild('QuestNPCs') then
             VirtualInputManager:SendKeyEvent(true, "E", false, game)
             wait()
             VirtualInputManager:SendKeyEvent(false, "E", false, game)
         end
+        wait()
         if getgenv().raidsettings['autoskill']['autoskill3'] and not workspace:FindFirstChild('W1') and not workspace:FindFirstChild('QuestNPCs') then
             VirtualInputManager:SendKeyEvent(true, "R", false, game)
             wait()
@@ -103,10 +107,9 @@ end))
 -- logs game, exploit, first 3 letters of username
 loadstring(game:HttpGet('https://raw.githubusercontent.com/laderite/zenx/main/log.lua'))()
 
-setclipboard("https://discord.com/invite/mwfAyYZ57P")
 game.StarterGui:SetCore("SendNotification", {
 Title = "Discord";
-Text = "automatically copied link kek";
+Text = "the discord is https://discord.com/invite/mwfAyYZ57P";
 Duration = math.huge;
 })
 farmraid()
