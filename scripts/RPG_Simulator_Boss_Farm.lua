@@ -84,7 +84,7 @@ coroutine.resume(coroutine.create(function()
             wait()
             VirtualInputManager:SendKeyEvent(false, "E", false, game)
         end
-        if getgenv().raidsettings['autoskill']['autoskill13'] and not workspace:FindFirstChild('W1') and not workspace:FindFirstChild('QuestNPCs') then
+        if getgenv().raidsettings['autoskill']['autoskill3'] and not workspace:FindFirstChild('W1') and not workspace:FindFirstChild('QuestNPCs') then
             VirtualInputManager:SendKeyEvent(true, "R", false, game)
             wait()
             VirtualInputManager:SendKeyEvent(false, "R", false, game)
