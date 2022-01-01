@@ -57,7 +57,7 @@ function farmraid()
         game:GetService("Workspace"):WaitForChild('Mobs'):FindFirstChild('Stand') or 
         game:GetService("Workspace"):WaitForChild('Mobs'):FindFirstChildWhichIsA("Model")
         if part then
-            
+            pcall(function()
                 swing = true
                 repeat
                     if type(getgenv().settings) ~= "function" or not getgenv().settings then 
@@ -69,7 +69,7 @@ function farmraid()
                 swing = false
                 abort = false
                 farmraid()
-            
+            end)
         else
             wait()
             farmraid()
@@ -117,7 +117,7 @@ coroutine.resume(coroutine.create(function()
 end))
 
 coroutine.resume(coroutine.create(function()
-    while wait(1) do
+    while wait() do
         if autodrankthepotions or getgenv().settings['autodrinkpotions'] then 
             game:GetService("ReplicatedStorage").Events.drink:FireServer()
         end
