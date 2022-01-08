@@ -278,7 +278,7 @@ coroutine.resume(coroutine.create(function()
     end
 end))
 
-game:GetService("Players").ecunif.PlayerGui.Partylist.Redo.Count:GetPropertyChangedSignal('Text'):Connect(function()
+game:GetService("Players").LocalPlayer.PlayerGui.Partylist.Redo.Count:GetPropertyChangedSignal('Text'):Connect(function()
     if getgenv().settings['webhook']['enabled'] then
         local content;
         if getgenv().settings['webhook']['pingeveryone'] then
