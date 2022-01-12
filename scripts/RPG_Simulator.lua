@@ -226,7 +226,7 @@ coroutine.resume(coroutine.create(function()
     while wait() do
         if getgenv().swing then
             swingdasword()
-            wait(0.3)
+            wait(0.5)
         end
     end        
 end))
