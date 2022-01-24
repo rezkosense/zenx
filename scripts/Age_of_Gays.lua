@@ -361,7 +361,7 @@ misc:Button{Name = "Server hop", Description = "Teleport to another server", Cal
 end}
 
 GUI:Credit{Name = "laderite / 'j",Description = "Script Developer",V3rm = "hangtightmc",Discord = "'j#6066"}
-GUI:Credit{Name = "DekuDimz",Description = "Stole his invis function",V3rm = "DekuDimz#3809",Discord = "DekuDimz#3809"}
+GUI:Credit{Name = "DekuDimz",Description = "Stole his invis function",V3rm = "DekuDimz",Discord = "DekuDimz#3809"}
 autofarm:prompt{
     Title = "LOADED",
 	Text = "Successfully loaded, Enjoy! Copy invite to discord server?",
