@@ -1,4 +1,4 @@
--- floppadev's script ty bab
+-- floppadev's script
 
 local module = {}
 
