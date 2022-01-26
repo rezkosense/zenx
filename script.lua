@@ -5,8 +5,8 @@ local games = {
     [4866692557] = "Age of Gays",
     [2788229376] = "Da Hood",
     [6720959312] = "Loot Quest",
-    [2990100290] = "RPG Simulator",
-    [4628853904] = "RPG Simulator",
+    [2990100290] = "RPG Simulator", -- world 1
+    [4628853904] = "RPG Simulator", -- world 2
 }
 
 for i,v in next, games do
@@ -14,5 +14,5 @@ for i,v in next, games do
 end
 
 local name = games[game.PlaceId] or games[game.GameId]
-if identifyexecutor() == "Fluxus" and name == "Trade_Tower" then return loadstring(game:HttpGet('https://raw.githubusercontent.com/laderite/zenx/main/scripts/Trade%20Tower%20Fluxus.lua'))() end-- Trade tower script for fluxus users
+if identifyexecutor() == "Fluxus" and name == "Trade_Tower" then return loadstring(game:HttpGet('https://raw.githubusercontent.com/laderite/zenx/main/scripts/Trade%20Tower%20Fluxus.lua'))() end -- Trade tower script for fluxus users
 return loadstring(game:HttpGet(url.. "/"..(name or "Universal")..".lua"))()
