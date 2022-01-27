@@ -76,6 +76,7 @@ commands.e = function(arguments)
             Noclipping = game:GetService('RunService').Stepped:Connect(NoclipLoop)
         end
     end
+end
 
 game.Players.LocalPlayer.Chatted:Connect(function(message,recipient)
     message = string.lower(message)
