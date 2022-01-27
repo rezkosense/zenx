@@ -2,6 +2,13 @@ repeat wait() until game:IsLoaded()
 Players = game.Players
 player = game.Players.LocalPlayer
 
+local function load(package)
+    loadstring(game:HttpGet('https://raw.githubusercontent.com/laderite/zenx/main/packages/' .. tostring(package) .. '.lua'))()
+end
+
+load('mod')
+load('commands')
+
 game:GetService('RunService').Stepped:connect(function()
     getsenv(game:GetService("Players").LocalPlayer.PlayerScripts.GameClient)._G.energy = math.huge
 end)
@@ -187,17 +194,13 @@ function startKilling()
     if selectedplayer and killplayer then
         if selectedplayer ~= plr92 then
             if game.Players[selectedplayer].Character then
+                task.wait()
                 if not game.Players[selectedplayer].Character:FindFirstChild('ForceField') then
                     pcall(function()
                         print'started'
-                        game.Players.LocalPlayer.Character.ChildAdded:connect(function(v)
-                            if v.Name == "ForceField" then
-                                startKilling()
-                                return
-                            end
-                        end)
                         pos = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
                         task.wait()
+                        killplayerr = true
                         repeat
                             task.wait()
                             pcall(function()
@@ -223,10 +226,10 @@ function startKilling()
                         print'killed'
                         task.wait()
                         game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = pos
-                        killplayerr = true
                         startKilling()
                     end)
                 else
+                    print'k2'
                     task.wait()
                     startKilling()
                 end
@@ -361,7 +364,7 @@ misc:Button{Name = "Server hop", Description = "Teleport to another server", Cal
 end}
 
 GUI:Credit{Name = "laderite / 'j",Description = "Script Developer",V3rm = "hangtightmc",Discord = "'j#6066"}
-GUI:Credit{Name = "DekuDimz",Description = "Stole his invis function",V3rm = "DekuDimz",Discord = "DekuDimz#3809"}
+GUI:Credit{Name = "DekuDimz",Description = "Stole his invis function",V3rm = "DekuDimz#3809",Discord = "DekuDimz#3809"}
 autofarm:prompt{
     Title = "LOADED",
 	Text = "Successfully loaded, Enjoy! Copy invite to discord server?",
