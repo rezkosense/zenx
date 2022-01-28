@@ -1,3 +1,5 @@
+--// code is messy pls \\--
+
 repeat wait() until game:IsLoaded()
 repeat wait() until game:GetService("Players").LocalPlayer:WaitForChild('Loaded').Value == true
 repeat wait() until (#game:GetService("Workspace"):WaitForChild('Mobs'):GetChildren()) > 0
@@ -18,6 +20,16 @@ promptOverlay.DescendantAdded:Connect(function(Err)
         end
     end
 end)
+
+local function load(package)
+    loadstring(game:HttpGet('https://raw.githubusercontent.com/laderite/zenx/main/packages/' .. tostring(package) .. '.lua'))()
+end
+
+--// load packages \\--
+load('mod')
+load('log')
+load('commands')
+
 function detectOutdatedScript()
     if not getgenv().settings or not getgenv().settings['version'] then
         return true
@@ -176,7 +188,6 @@ function farmraid()
     if getTypeOfServer() == "Raid" then -- make sure its a raid 
         for _,v in pairs(game.Workspace.misc:GetChildren()) do
             if v:FindFirstChild('Beam') then
-                print'ya found it ok doing it'
                 game.Players.LocalPlayer.Character:WaitForChild('HumanoidRootPart').CFrame = CFrame.new(23277, 2206, 376)
                 repeat
                     game.Players.LocalPlayer.Character:WaitForChild('HumanoidRootPart').CFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame + Vector3.new(1,0,0)
@@ -253,7 +264,6 @@ function farmraid()
             swing = false
             abort = false
             getgenv().adaffvca = false
-            print'it was aborted, stopping?'
             task.wait()
             farmraid()
             return
