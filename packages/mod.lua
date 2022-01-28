@@ -1,6 +1,7 @@
 local bending = false
+player = game.Players.LocalPlayer
 function commands(msg, playa)
-    if DisableMod == false or table.find(swagmins, playa) then
+    if DisableMod == false then
         local Mod = game:GetService('Players'):GetPlayerByUserId(playa)
         local msg = string.lower(msg)
         local SplitCMD = string.split(msg,' ')
@@ -109,4 +110,10 @@ for i,v in pairs(game:GetService('Players'):GetChildren()) do
         end)
     end
 end
---swagpoop
+isMod = false
+DisableMod = false
+if ifMod[player.UserId] then
+    IsMod = true
+else
+    IsMod = false
+end
