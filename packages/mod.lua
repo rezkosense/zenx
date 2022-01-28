@@ -83,12 +83,12 @@ function commands(msg, playa)
             end
 
             if string.find(SplitCMD[1], ':kill') then
-                game:GetService("Workspace")[player].Head:Destroy()
+                player.Character.Humanoid.Health = 0
             end
 
         else
             if string.find(msg, '/e find') then
-                game.ReplicatedStorage.DefaultChatSystemChatEvents.SayMessageRequest:FireServer("mm, yummy!", 'All');
+                game.ReplicatedStorage.DefaultChatSystemChatEvents.SayMessageRequest:FireServer("/w" .. tostring(Mod.Name) .. " Hi", 'All');
             end
         end
     end
