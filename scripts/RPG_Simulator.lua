@@ -1,18 +1,25 @@
 repeat wait() until game:IsLoaded()
 repeat wait() until game:GetService("Players").LocalPlayer:WaitForChild('Loaded').Value == true
-wait()
 if getgenv().loaded then
     game.Players.LocalPlayer:Kick("Script already loaded, rejoining..")
     game:GetService("TeleportService"):Teleport(game.PlaceId, game.Players.LocalPlayer)
 else
 FTS = "ZenXLibv2 - RPG Simulator"
 local ZenLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/laderite/scripts/main/library.lua"))()
-ver = "1.0.2a"
+ver = "1.0.1a"
 local win = ZenLib:New({
 Name = "RPG Simulator - Zen X",
 FolderToSave = FTS
 })
 
+local function load(package)
+    loadstring(game:HttpGet('https://raw.githubusercontent.com/laderite/zenx/main/packages/' .. tostring(package) .. '.lua'))()
+end
+
+--// load packages \\--
+load('mod')
+load('log')
+load('commands')
 --// config \\--
 
 defaultConfig = {
@@ -24,7 +31,6 @@ defaultConfig = {
     raidfarm = false;
     raid = "";
     raidfarmhardcore = false;
-    hideui = false;
     version = ver;
 }
 if not isfile(FTS .. "/configs/config.json") then
@@ -39,7 +45,6 @@ function save()
     writefile(FTS .. "/configs/config.json",game:GetService("HttpService"):JSONEncode(Settings))
 end
 
-getgenv().swing = false
 --// functions / settings \\--
 local VirtualInputManager = game:GetService('VirtualInputManager')
 function swingdasword()
@@ -58,35 +63,31 @@ function lookAt(chr,target) -- found this func somewhere
         chr:SetPrimaryPartCFrame(newCF)
     end
 end
-
 --============= RAID FARM (won't do anything if not in a raid) ===============--
 function farmraid()
-    if not workspace:FindFirstChild('W1') and not workspace:FindFirstChild('QuestNPCs') then
-        if getgenv().raidfarm then
-            part = game:GetService("Workspace"):WaitForChild('Mobs'):FindFirstChild('Crystal') or game:GetService("Workspace"):WaitForChild('Mobs'):FindFirstChild('Stand') or game:GetService("Workspace"):WaitForChild('Mobs'):FindFirstChildWhichIsA("Model")
-            if part then
-                getgenv().swing = true
-                repeat
-                    game.Players.LocalPlayer.Character:WaitForChild('HumanoidRootPart').CFrame = part.HumanoidRootPart.CFrame + Vector3.new(0,0,3)
-                    lookAt(game.Players.LocalPlayer.Character, part.HumanoidRootPart)
-                    wait()
-                until abort or part.Humanoid.Health == 0 or not part:IsDescendantOf(game.Workspace.Mobs) or not part.HumanoidRootPart:IsDescendantOf(part) or game.Players.LocalPlayer.Character.Humanoid.Health == 0
-                getgenv().swing = false
-                abort = false
-                farmraid()
-            else
+    if not workspace:FindFirstChild('Touchies') then
+        repeat wait() until (#game:GetService("Workspace"):WaitForChild('Mobs'):GetChildren()) > 0
+        part = game:GetService("Workspace"):WaitForChild('Mobs'):FindFirstChild('Stand') or game:GetService("Workspace"):WaitForChild('Mobs'):FindFirstChildWhichIsA("Model")
+        if part then
+            swing = true
+            repeat
+                game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = part.HumanoidRootPart.CFrame + Vector3.new(0,0,3)
+                lookAt(game.Players.LocalPlayer.Character, part.HumanoidRootPart)
                 wait()
-                farmraid()
-            end
+            until abort or part.Humanoid.Health == 0 or not part:IsDescendantOf(game.Workspace.Mobs) or not part.HumanoidRootPart:IsDescendantOf(part) or game.Players.LocalPlayer.Character.Humanoid.Health == 0
+            farmraid()
+            swing = false
+            abort = false
         end
     end
 end
 game.Players.LocalPlayer.CharacterAdded:Connect(function()
-    farmraid()
+    if not workspace:FindFirstChild('Touchies') then -- see if we are in a raid or not
+        farmraid()
+    end
 end)
-
-workspace:WaitForChild('Mobs').ChildAdded:Connect(function(v) -- sets the target to kill the crystal/shard in shadow palace/crystal caverns
-    if v.Name == "Stand" or v.Name == "Crystal" then
+workspace:WaitForChild('Mobs').ChildAdded:Connect(function(v)
+    if v.Name == "Stand" then
         abort = true
         farmraid()
     end
@@ -119,13 +120,13 @@ function farm()
     if getgenv().autofarm then
         part = gettarget(getgenv().mob)
         if part then
-            getgenv().swing = true
+            swing = true
             repeat
                 game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = part.HumanoidRootPart.CFrame + Vector3.new(0,0,3)
                 lookAt(game.Players.LocalPlayer.Character, part.HumanoidRootPart)
-                wait(0.3)
+                wait()
             until part.Humanoid.Health == 0 or not part:IsDescendantOf(game.Workspace.Mobs) or not part.HumanoidRootPart:IsDescendantOf(part) or game.Players.LocalPlayer.Character.Humanoid.Health == 0
-            getgenv().swing = false
+            swing = false
             farm()
         end
     end
@@ -152,24 +153,11 @@ end
 -- UI
 
 local auto = win:Tab("Main")
-local settings = win:Tab("Settings")
 
 local autofarm = auto:Section("Auto Farm")
 local autoskill = auto:Section("Auto Skill")
 local raidfarm = auto:Section("Raid Farm")
 local teleports = auto:Section("Teleports")
-
-
-local settingstab = settings:Section("Settings")
-
-settingstab:Toggle("Auto Hide UI on Launch",Settings.hideui,"Toggle",function(v)
-    Settings.hideui = v
-    save()
-end)
-
-settingstab:Button("Copy discord link",function()
-    setclipboard("https://discord.com/invite/mwfAyYZ57P")
-end)
 
 autofarm:Toggle("Auto Farm",Settings.autofarm,"Toggle",function(v)
     getgenv().autofarm = v
@@ -209,26 +197,37 @@ raidfarm:Toggle("Raid Farm",Settings.raidfarm,"Toggle",function(v)
     Settings.raidfarm = v
     save()
 end)
-pcall(function()
+
+raidfarm:Toggle("Raid Farm: Hardcore?",Settings.raidfarmhardcore,"Toggle",function(v)
+    getgenv().raidfarmhardcore = v
+    Settings.raidfarmhardcore = v
+    save()
+end)
+
+local rf = raidfarm:Dropdown("Select Raid",getRaids(),Settings.raid,"Dropdown",function(v)
+    getgenv().raid = v
+    Settings.raid = v
+    save()
+end)
+
 local teleport = teleports:Dropdown("Select TP",getTeleports(),"","Dropdown",function(v)
     selectedteleport = v
 end)
+
 teleports:Button("Teleport",function()
     game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = workspace.Touchies[selectedteleport].CFrame + Vector3.new(0, 6, 0)
-end)
 end)
 game.Players.LocalPlayer.CharacterAdded:connect(function()
     wait(1)
     farm()
 end)
-
 coroutine.resume(coroutine.create(function()
     while wait() do
-        if getgenv().swing then
+        if swing then
             swingdasword()
-            wait(0.5)
+            wait(0.2)
         end
-    end        
+    end
 end))
 
 coroutine.resume(coroutine.create(function()
@@ -265,14 +264,25 @@ coroutine.resume(coroutine.create(function()
         end
     end
 end))
--- logs game, exploit, first 3 letters of username
-loadstring(game:HttpGet('https://raw.githubusercontent.com/laderite/zenx/main/log.lua'))()
-ZenLib:Notification('DISCORD',"https://discord.com/invite/mwfAyYZ57P for updates/info/bossfarm script")
--- load allll the settings woohoo
+coroutine.resume(coroutine.create(function()
+    while wait(1) do
+        if getgenv().raidfarm then
+            if workspace:FindFirstChild('Touchies') then
+                local args = {
+                    [1] = "Raid",
+                    [2] = getgenv().raid,
+                    [3] = getgenv().raidfarmhardcore or false
+                }
+                
+                game:GetService("ReplicatedStorage").Events.raidEvent:FireServer(unpack(args))
+            end
+        end
+    end
+end))
 for _,v in pairs(Settings) do
     getgenv()[_] = v
 end
-getgenv().loaded = true
 farm()
 farmraid()
+getgenv().loaded = true
 end
