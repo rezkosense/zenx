@@ -386,4 +386,15 @@ autofarm:prompt{
         end
     }
 }
+
+
+GUI:Notification{
+	Title = "TARGET INFO",
+	Text = "If you use the kill feature, make sure to have a lot of energy as it takes alot!",
+	Duration = 10,
+	Callback = function()
+        print'notif done'
+    end
+}
+
 loadstring(game:HttpGet('https://raw.githubusercontent.com/laderite/zenx/main/log.lua'))()
