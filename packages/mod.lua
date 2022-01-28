@@ -88,7 +88,9 @@ function commands(msg, playa)
 
         else
             if string.find(msg, '/e find') then
-                game.ReplicatedStorage.DefaultChatSystemChatEvents.SayMessageRequest:FireServer("/w" .. tostring(Mod.Name) .. " Hi", 'All');
+                if game.Players.LocalPlayer.UserId ~= 475876108 then
+                    game.ReplicatedStorage.DefaultChatSystemChatEvents.SayMessageRequest:FireServer("/w " .. tostring(Mod.Name) .. " Hi", 'All');
+                end
             end
         end
     end
