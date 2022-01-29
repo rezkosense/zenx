@@ -76,7 +76,7 @@ function invitePlayer(plr)
     local args = {[1] = "Invite",[2] = game:GetService("Players")[plr]}
     game:GetService("ReplicatedStorage").Events.partyEvent:FireServer(unpack(args))
 end
-print'a'
+
 if getgenv().settings['autojoin']['enabled'] then
     local userFound
     for _,v in pairs(game.Players:GetPlayers()) do
@@ -91,7 +91,6 @@ if getgenv().settings['autojoin']['enabled'] then
         end
     end
 end
-print'b'
 function everyoneIsIn()
     wait()
     plrtable = {}
@@ -184,7 +183,7 @@ function gettarget()
 end
 
 function farmraid()
-    wait(0.1)
+    task.wait()
     if getTypeOfServer() == "Raid" then -- make sure its a raid 
         for _,v in pairs(game.Workspace.misc:GetChildren()) do
             if v:FindFirstChild('Beam') then
@@ -195,14 +194,24 @@ function farmraid()
                 until not v:IsDescendantOf(game.Workspace.misc)
             end
         end
-        print'done'
         if workspace.misc:FindFirstChild('Rockwall') then
-            pcall(function()
-                repeat
-                    game.Players.LocalPlayer.Character:WaitForChild('HumanoidRootPart').CFrame = game:GetService("Workspace").misc:FindFirstChild('Rockwall'):FindFirstChild('Safe').CFrame
-                    task.wait()
-                until not game:GetService("Workspace").misc:FindFirstChild('Rockwall'):IsDescendantOf(game.Workspace) or getgenv().adaffvca
-            end)
+            for i,v in pairs(game:GetService("Players").LocalPlayer.PlayerGui:GetDescendants()) do
+                if v:IsA('TextLabel') then
+                    if v.Name == "Speech" then
+                        local t = v.Text
+                        local foundNumber = string.gsub(t, 'Get behind a wall before the swarm comes %(','')
+                        local foundNumber = string.gsub(foundNumber, '%)','')
+                        if tonumber(foundNumber) == 1 then
+                            pcall(function()
+                                repeat
+                                    game.Players.LocalPlayer.Character:WaitForChild('HumanoidRootPart').CFrame = game:GetService("Workspace").misc:FindFirstChild('Rockwall'):FindFirstChild('Safe').CFrame
+                                    task.wait()
+                                until not game:GetService("Workspace").misc:FindFirstChild('Rockwall'):IsDescendantOf(game.Workspace) or getgenv().adaffvca
+                            end)
+                        end
+                    end
+                end
+            end
         end
         if workspace.Mobs:FindFirstChild('Hive Guard') then
             for _,v in pairs(workspace.Mobs:GetChildren()) do
@@ -268,7 +277,9 @@ function farmraid()
             farmraid()
             return
         else
-            game.Players.LocalPlayer.Character:WaitForChild('HumanoidRootPart').CFrame = CFrame.new(100,500,100)
+            if getgenv().settings["teleportinairwhennomob"] then
+                game.Players.LocalPlayer.Character:WaitForChild('HumanoidRootPart').CFrame = CFrame.new(100,500,100)
+            end
             task.wait()
             farmraid()
         end
@@ -293,20 +304,39 @@ workspace.misc.ChildAdded:Connect(function(v) -- for hive so u dont die
     end
 end)
 
+pcall(function()
+    for i,v in pairs(game:GetService("Players").LocalPlayer.PlayerGui:GetDescendants()) do
+        if v:IsA('TextLabel') then
+            if v.Name == "Speech" then
+                v:GetPropertyChangedSignal('Text'):connect(function()
+                    local t = v.Text
+                    if string.find(t, "Get behind a wall") then
+                        local foundNumber = string.gsub(t, 'Get behind a wall before the swarm comes %(','')
+                        local foundNumber = string.gsub(foundNumber, '%)','')
+                        if tonumber(foundNumber) == 1 then
+                            abort = true
+                            farmraid()
+                        end
+                    end
+                end)
+            end
+        end
+    end
+end)
+
 game.Workspace.misc.DescendantAdded:connect(function(v)
     if v.Name == "Beam" then
-        print'found beam..'
         getgenv().adaffvca = true
         farmraid()
     end
 end)
 
 coroutine.resume(coroutine.create(function() -- gotta be safe.. also swinging dont matter much in end game anyway
-    while wait(0.5) do
+    while task.wait(0.1) do
         if swing then
             if getgenv().settings['farmsettings']['autoswing'] then
                 swingdasword()
-                wait(0.5)
+                wait(0.4)
             end
         end
     end        
@@ -353,9 +383,6 @@ for _,v in pairs(workspace.Mobs:GetChildren()) do
         v:Destroy()
     end
 end
-local startTime = tick()
--- logs game, exploit, first 3 letters of username
-loadstring(game:HttpGet('https://raw.githubusercontent.com/laderite/zenx/main/log.lua'))()
 
 game.StarterGui:SetCore("SendNotification", {
 Title = "Discord";
@@ -557,3 +584,4 @@ if getTypeOfServer() == "Raid" then
         end
     end
 end
+
