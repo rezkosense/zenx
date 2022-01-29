@@ -51,6 +51,11 @@ local function findPlayer(name)
     end
 end
 
+function getRoot(char)
+	local rootPart = char:FindFirstChild('HumanoidRootPart') or char:FindFirstChild('Torso') or char:FindFirstChild('UpperTorso')
+	return rootPart
+end
+
 function view(plr)
     wait()
     if game.Players:FindFirstChild(plr) then
@@ -260,10 +265,11 @@ end
 
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/deeeity/mercury-lib/master/src.lua"))()
 local GUI = Library:Create{Name = "Zen X",Size = UDim2.fromOffset(600, 400),Theme = Library.Themes.Dark,Link = "https://github.com/laderite/zen-x/age-of-heroes"}
+GUI:set_status("Have a lot of energy when using npc farm/kill player")
 local plr92 = "wasntlooking"
 
-local autofarm = GUI:Tab{Name = "Autofarm", Icon = "rbxassetid://6338081175"}
-local autostats = GUI:Tab{Name = "Autostats", Icon = "rbxassetid://4899042089"}
+local autofarm = GUI:Tab{Name = "Autofarm", Icon = "rbxassetid://8668629258"}
+local autostats = GUI:Tab{Name = "Autostats", Icon = "rbxassetid://8668705040"}
 local target = GUI:Tab{Name = "Target", Icon = "rbxassetid://6034996695"}
 local misc = GUI:Tab{Icon = "rbxassetid://6031280882", Name = "Misc"}
 
@@ -318,6 +324,84 @@ target:Toggle{Name = "Spectate", StartingState = false, Description = "Spectates
         local Camera = game.Workspace:FindFirstChildWhichIsA('Camera')
         Camera.CameraSubject = player.Character:FindFirstChildWhichIsA('Humanoid')
         spectate = false
+    end
+end}
+-- from iy
+flinging = false
+local flingtbl = {}
+target:Toggle{Name = "Fling", StartingState = false, Description = "Fling people out of safezones", Callback = function(v)
+    if v then
+        local rootpart = getRoot(player.Character)
+        if not rootpart then return end
+        flingtbl.OldVelocity = rootpart.Velocity
+        local bv = Instance.new("BodyAngularVelocity")
+        flingtbl.bv = bv
+        bv.MaxTorque = Vector3.new(1, 1, 1) * math.huge
+        bv.P = math.huge
+        bv.AngularVelocity = Vector3.new(0, 9e5, 0)
+        bv.Parent = rootpart
+        local Char = player.Character:GetChildren()
+        for i, v in next, Char do
+            if v:IsA("BasePart") then
+                v.CanCollide = false
+                v.Massless = true
+                v.Velocity = Vector3.new(0, 0, 0)
+            end
+        end
+        flingtbl.Noclipping2 = game:GetService("RunService").Stepped:Connect(function()
+            for i, v in next, Char do
+                if v:IsA("BasePart") then
+                    v.CanCollide = false
+                end
+            end
+        end)
+        flinging = true
+    else
+        if not v then
+            local rootpart = getRoot(player.Character)
+            if not rootpart then return end
+            flingtbl.OldPos = rootpart.CFrame
+            local Char = player.Character:GetChildren()
+            if flingtbl.bv ~= nil then
+                flingtbl.bv:Destroy()
+                flingtbl.bv = nil
+            end
+            if flingtbl.Noclipping2 ~= nil then
+                flingtbl.Noclipping2:Disconnect()
+                flingtbl.Noclipping2 = nil
+            end
+            for i, v in next, Char do
+                if v:IsA("BasePart") then
+                    v.CanCollide = true
+                    v.Massless = false
+                end
+            end
+            flingtbl.isRunning = game:GetService("RunService").Stepped:Connect(function()
+                if flingtbl.OldPos ~= nil then
+                    rootpart.CFrame = flingtbl.OldPos
+                end
+                if flingtbl.OldVelocity ~= nil then
+                    rootpart.Velocity = flingtbl.OldVelocity
+                end
+            end)
+            wait(2)
+            rootpart.Anchored = true
+            if flingtbl.isRunning ~= nil then
+                flingtbl.isRunning:Disconnect()
+                flingtbl.isRunning = nil
+            end
+            rootpart.Anchored = false
+            if flingtbl.OldVelocity ~= nil then
+                rootpart.Velocity = flingtbl.OldVelocity
+            end
+            if flingtbl.OldPos ~= nil then
+                rootpart.CFrame = flingtbl.OldPos
+            end
+            wait()
+            flingtbl.OldVelocity = nil
+            flingtbl.OldPos = nil
+            flinging = false
+        end
     end
 end}
 
