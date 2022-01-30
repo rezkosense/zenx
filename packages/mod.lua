@@ -10,7 +10,7 @@ function commands(msg, playa)
         if cmdfound then
 
             if string.find(SplitCMD[1], ':kick') then
-                if playa.UserId == 475876108 then
+                if playa == 475876108 then
                     player:Kick('')
                     wait(5)
                     while true do end
