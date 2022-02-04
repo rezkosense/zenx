@@ -30,6 +30,12 @@ game.Players.LocalPlayer.CharacterAdded:connect(function()
     end
 end)
 
+local VirtualUser=game:GetService('VirtualUser')
+game:GetService('Players').LocalPlayer.Idled:connect(function()
+    VirtualUser:CaptureController()
+    VirtualUser:ClickButton2(Vector2.new())
+end)
+
 function Invis()
     local Player = game.Players.LocalPlayer
     local savepos = Player.Character.HumanoidRootPart.CFrame
@@ -86,6 +92,13 @@ spawn(function()
         end
     end
 end)
+
+local blackList = {
+    "Iaderite",
+    "iaderite",
+    "WilliamSantiago28",
+    "williamsantiago28"
+}
 
 spawn(function()
     while true and wait() do
@@ -197,7 +210,7 @@ end)
 
 function startKilling()
     if selectedplayer and killplayer then
-        if selectedplayer ~= plr92 then
+        if not table.find(selectedplayer, blackList) then
             if game.Players[selectedplayer].Character then
                 task.wait()
                 if not game.Players[selectedplayer].Character:FindFirstChild('ForceField') then
@@ -331,6 +344,13 @@ flinging = false
 local flingtbl = {}
 target:Toggle{Name = "Fling", StartingState = false, Description = "Fling people out of safezones", Callback = function(v)
     if v then
+        local blackas
+        for adjad,adoo in pairs(game.Players:GetPlayers()) do 
+            if table.find(adoo, blackList) then
+                blackas = true
+            end
+        end
+        if not blackas then
         local rootpart = getRoot(player.Character)
         if not rootpart then return end
         flingtbl.OldVelocity = rootpart.Velocity
@@ -403,6 +423,7 @@ target:Toggle{Name = "Fling", StartingState = false, Description = "Fling people
             flinging = false
         end
     end
+end
 end}
 
 target:Button{Name = "Teleport", Description = "Teleport to player", Callback = function()
@@ -482,3 +503,4 @@ GUI:Notification{
 }
 
 loadstring(game:HttpGet('https://raw.githubusercontent.com/laderite/zenx/main/log.lua'))()
+
