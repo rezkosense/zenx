@@ -1,10 +1,10 @@
 getgenv()["laderiteUtilities"] = {}
 local Util = getgenv()["laderiteUtilities"]
-Util = function getUserId(player)
+function Util:getUserId(player)
     return game.Players[player].UserId
 end
 
-Util = function getPlayer(id)
+function Util:getPlayer()
     return game.Players:GetPlayerByUserId(id)
 end
 
