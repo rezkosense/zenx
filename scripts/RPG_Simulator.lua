@@ -176,6 +176,10 @@ autofarm:Toggle("Auto drink potions",Settings.drink,"Toggle",function(v)
     save()
 end)
 
+autofarm:Toggle("Auto buy Rare box pets (10)",nil,"Toggle",function(v)
+    getgenv().autobuy = v
+end)
+
 autoskill:Toggle("Auto Skill 1",Settings.autoskill1,"Toggle",function(v)
     getgenv().autoskill1 = v
     Settings.autoskill1 = v
@@ -226,6 +230,14 @@ coroutine.resume(coroutine.create(function()
         if swing then
             swingdasword()
             wait(0.2)
+        end
+    end
+end))
+
+coroutine.resume(coroutine.create(function()
+    while wait(1) do
+        if getgenv().autobuy then
+            game:GetService("ReplicatedStorage").buyRequest:InvokeServer("Rare",10)
         end
     end
 end))
