@@ -210,7 +210,7 @@ end)
 
 function startKilling()
     if selectedplayer and killplayer then
-        if not table.find(selectedplayer, blackList) then
+
             if game.Players[selectedplayer].Character then
                 task.wait()
                 if not game.Players[selectedplayer].Character:FindFirstChild('ForceField') then
@@ -257,7 +257,7 @@ function startKilling()
                 startKilling()
             end
         end
-    end
+
 end
 
 function spec()
@@ -344,13 +344,7 @@ flinging = false
 local flingtbl = {}
 target:Toggle{Name = "Fling", StartingState = false, Description = "Fling people out of safezones", Callback = function(v)
     if v then
-        local blackas
-        for adjad,adoo in pairs(game.Players:GetPlayers()) do 
-            if table.find(adoo, blackList) then
-                blackas = true
-            end
-        end
-        if not blackas then
+
         local rootpart = getRoot(player.Character)
         if not rootpart then return end
         flingtbl.OldVelocity = rootpart.Velocity
@@ -423,7 +417,7 @@ target:Toggle{Name = "Fling", StartingState = false, Description = "Fling people
             flinging = false
         end
     end
-end
+
 end}
 
 target:Button{Name = "Teleport", Description = "Teleport to player", Callback = function()
