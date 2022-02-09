@@ -1,5 +1,3 @@
---// code is messy pls \\--
-
 repeat wait() until game:IsLoaded()
 repeat wait() until game:GetService("Players").LocalPlayer:WaitForChild('Loaded').Value == true
 repeat wait() until (#game:GetService("Workspace"):WaitForChild('Mobs'):GetChildren()) > 0
@@ -61,7 +59,7 @@ function getTableSize(table)
 end
 
 function getRandomButtonResponse()
-    local s = {"ok i go now ty","ight thanks sexy man","alright bro thanks :))))","ty baby girl"}
+    local s = {"ok i go now ty","ight thanks sexy man","alright bro thanks :))))","ty baby girl","Ok UwU","omg outdated script?!?! ok i go get new script cuz im pro :D"}
     return tostring(s[math.random(1,getTableSize(s))])
 end
 
@@ -130,6 +128,83 @@ VirtualInputManager:SendKeyEvent(true, "U", false, game) -- get rid of the 'clic
 task.wait()
 VirtualInputManager:SendKeyEvent(false, "U", false, game)
 
+coroutine.resume(coroutine.create(function()
+    thetime = getgenv().settings['leavetimer']
+    while task.wait() do
+        if thetime == 0 and getTypeOfServer() == "Raid" then
+            print'Leave timer reached, leaving.'
+            local args = {[1] = "home"}
+            game:GetService("ReplicatedStorage").MapSelection:FireServer(unpack(args))
+            wait(3)
+            game.Players.LocalPlayer:Kick("\nRejoining...")
+            wait()
+            game:GetService("TeleportService"):Teleport("2990100290", game.Players.LocalPlayer)
+        else
+            thetime = thetime - 1
+        end
+        task.wait(1)
+    end
+end))
+
+if getgenv().settings['waitforjoiners']['enabled'] then
+    waitForJoiners()
+end
+
+if getTypeOfServer() == "Lobby" then
+    if table.find(getgenv().settings['waitforjoiners']['joiners'], game.Players.LocalPlayer.Name) then
+        while wait() do
+            for _,v in pairs(game:GetService("Players").LocalPlayer.PlayerGui.RaidsGUI:GetChildren()) do
+                if v.Name == "Invite" then
+                    if v.TextLabel.Text ~= "ZephsyJ" and string.find(v.TextLabel.Text, getgenv().settings['waitforjoiners']['host']) then
+                        local button = v:WaitForChild("YES")
+                        for i,v in pairs(getconnections(button.MouseButton1Click)) do
+                            v:Fire()
+                        end
+                    end
+                end
+            end
+        end
+    end
+end
+
+coroutine.resume(coroutine.create(function()
+    if getgenv().settings['waitforjoiners']['enabled'] then
+        if getTypeOfServer() == "Raid" then
+        local d = game.Players:WaitForChild(getgenv().settings['waitforjoiners']['host'], 20)
+            if not d then
+                local args = {[1] = "home"}
+                game:GetService("ReplicatedStorage").MapSelection:FireServer(unpack(args))
+                wait(3)
+                game.Players.LocalPlayer:Kick("\nRejoining...")
+                wait()
+                game:GetService("TeleportService"):Teleport("2990100290", game.Players.LocalPlayer)
+            end
+        end
+    end
+end))
+
+coroutine.resume(coroutine.create(function(v)
+    while wait(1) do
+        if getgenv().settings['autojoinraid']['enabled'] then
+            if workspace:FindFirstChild('W1') or workspace:FindFirstChild('QuestNPCs') then
+                if getgenv().settings['waitforjoiners']['enabled'] then
+                    if not table.find(getgenv().settings['waitforjoiners']['joiners'], game.Players.LocalPlayer.Name) then
+                        local dungeon = getgenv().settings['autojoinraid']['dungeon']
+                        local hardcore = getgenv().settings['autojoinraid']['hardcore']
+                        local args = {[1] = "Raid", [2] = dungeon, [3] = hardcore}
+                        game:GetService("ReplicatedStorage").Events.raidEvent:FireServer(unpack(args))
+                    end
+                else
+                    local dungeon = getgenv().settings['autojoinraid']['dungeon']
+                    local hardcore = getgenv().settings['autojoinraid']['hardcore']
+                    local args = {[1] = "Raid", [2] = dungeon, [3] = hardcore}
+                    game:GetService("ReplicatedStorage").Events.raidEvent:FireServer(unpack(args))
+                end
+            end
+        end
+    end
+end))
+
 function swingdasword()
     local args = {[1] = "Slash"}
     game:GetService("ReplicatedStorage").Events.attack:FireServer(unpack(args))
@@ -165,8 +240,9 @@ function sell()
         end
     end
 end
-sell()
 end)
+
+sell()
         
 function gettarget()
     local target = game:GetService("Workspace"):WaitForChild('Mobs'):FindFirstChild('Crystal') or game:GetService("Workspace"):WaitForChild('Mobs'):FindFirstChild('Stand')
@@ -273,14 +349,12 @@ function farmraid()
             swing = false
             abort = false
             getgenv().adaffvca = false
-            task.wait()
             farmraid()
             return
         else
             if getgenv().settings["teleportinairwhennomob"] then
                 game.Players.LocalPlayer.Character:WaitForChild('HumanoidRootPart').CFrame = CFrame.new(100,500,100)
             end
-            task.wait()
             farmraid()
         end
     end
@@ -394,81 +468,6 @@ coroutine.resume(coroutine.create(function()
 farmraid()
 end))
 
-
-coroutine.resume(coroutine.create(function()
-    thetime = getgenv().settings['leavetimer']
-    while task.wait() do
-        if thetime == 0 then
-            print'Leave timer reached, leaving.'
-            local args = {[1] = "home"}
-            game:GetService("ReplicatedStorage").MapSelection:FireServer(unpack(args))
-            wait(3)
-            game.Players.LocalPlayer:Kick("\nRejoining...")
-            wait()
-            game:GetService("TeleportService"):Teleport("2990100290", game.Players.LocalPlayer)
-        else
-            thetime = thetime - 1
-        end
-        task.wait(1)
-    end
-end))
-
-if getgenv().settings['waitforjoiners']['enabled'] then
-    waitForJoiners()
-end
-
-if getTypeOfServer() == "Lobby" then
-    if table.find(getgenv().settings['waitforjoiners']['joiners'], game.Players.LocalPlayer.Name) then
-        while wait() do
-            for _,v in pairs(game:GetService("Players").LocalPlayer.PlayerGui.RaidsGUI:GetChildren()) do
-                if v.Name == "Invite" then
-                    if v.TextLabel.Text ~= "ZephsyJ" and string.find(v.TextLabel.Text, getgenv().settings['waitforjoiners']['host']) then
-                        local button = v:WaitForChild("YES")
-                        for i,v in pairs(getconnections(button.MouseButton1Click)) do
-                            v:Fire()
-                        end
-                    end
-                end
-            end
-        end
-    end
-end
-
-coroutine.resume(coroutine.create(function()
-    if getgenv().settings['waitforjoiners']['enabled'] then
-        if getTypeOfServer() == "Raid" then
-        local d = game.Players:WaitForChild(getgenv().settings['waitforjoiners']['host'], 20)
-            if not d then
-                local args = {[1] = "home"}
-                game:GetService("ReplicatedStorage").MapSelection:FireServer(unpack(args))
-                wait(3)
-                game.Players.LocalPlayer:Kick("\nRejoining...")
-                wait()
-                game:GetService("TeleportService"):Teleport("2990100290", game.Players.LocalPlayer)
-            end
-        end
-    end
-end))
-
-if getgenv().settings['autojoinraid']['enabled'] then
-    if workspace:FindFirstChild('W1') or workspace:FindFirstChild('QuestNPCs') then
-        if getgenv().settings['waitforjoiners']['enabled'] then
-            if not table.find(getgenv().settings['waitforjoiners']['joiners'], game.Players.LocalPlayer.Name) then
-                local dungeon = getgenv().settings['autojoinraid']['dungeon']
-                local hardcore = getgenv().settings['autojoinraid']['hardcore']
-                local args = {[1] = "Raid", [2] = dungeon, [3] = hardcore}
-                game:GetService("ReplicatedStorage").Events.raidEvent:FireServer(unpack(args))
-            end
-        else
-            local dungeon = getgenv().settings['autojoinraid']['dungeon']
-            local hardcore = getgenv().settings['autojoinraid']['hardcore']
-            local args = {[1] = "Raid", [2] = dungeon, [3] = hardcore}
-            game:GetService("ReplicatedStorage").Events.raidEvent:FireServer(unpack(args))
-        end
-    end
-end
-
-
 coroutine.resume(coroutine.create(function()
     while wait(1) do
         if (doautoskill or getgenv().settings['autoskill']['autoskill1']) and not workspace:FindFirstChild('W1') and not workspace:FindFirstChild('QuestNPCs') then
@@ -563,6 +562,42 @@ game.Players.LocalPlayer.PlayerGui.ChildAdded:Connect(function(v)
     end
 end)
 
+game:GetService("Players").LocalPlayer.PlayerGui.Chat.Frame.ChatChannelParentFrame["Frame_MessageLogDisplay"].Scroller.ChildAdded:connect(function(v)
+    if v:IsA('Frame') then
+        local text = v:WaitForChild('TextLabel')
+        for _,items in pairs(getgenv().settings['webhook']['itemnotifier']) do
+            if string.find(text.Text, items) then
+                    local data = 
+                    {
+                        ["content"] = "@everyone";
+                        ["embeds"] = {{
+                            ["title"] = "Item Notifier"; 
+                            ["description"] = [[
+                                **User**: ||]] .. game.Players.LocalPlayer.Name .. [[||
+                                **Item Name**: ]] .. items,
+                            ["color"] = tonumber(0xcfd9de);
+                            ["footer"] = {
+                                ["text"] = "RPG Simulator - Zen X";
+                                ["icon_url"] = "https://cdn.discordapp.com/attachments/626185393707941889/940776650700914708/228-2280201_transparent-zen-circle-png-zen-circle-png-png-removebg-preview-removebg-preview.png"; -- The image icon you want your footer to have
+                            };
+                            ["timestamp"] = DateTime.now():ToIsoDate();
+                            
+                        }}
+                    }
+                
+                local newdata = game:GetService("HttpService"):JSONEncode(data)
+                
+                local headers = {
+                ["content-type"] = "application/json"
+                }
+                request = http_request or request or HttpPost or syn.request
+                local abcdef = {Url = getgenv().settings['webhook']['url'], Body = newdata, Method = "POST", Headers = headers}
+                request(abcdef)
+            end
+        end
+    end
+end)
+
 wait(5)
 if getTypeOfServer() == "Raid" then
     if getgenv().settings['waitforjoiners']['enabled'] then
@@ -584,4 +619,3 @@ if getTypeOfServer() == "Raid" then
         end
     end
 end
-
