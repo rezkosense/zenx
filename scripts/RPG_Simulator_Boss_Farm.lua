@@ -1,3 +1,5 @@
+--// code is messy pls \\--
+
 repeat wait() until game:IsLoaded()
 repeat wait() until game:GetService("Players").LocalPlayer:WaitForChild('Loaded').Value == true
 repeat wait() until (#game:GetService("Workspace"):WaitForChild('Mobs'):GetChildren()) > 0
@@ -6,7 +8,6 @@ if workspace.Mobs:FindFirstChild("Queen's Egg") then
 end
 
 abort = false
--- detect if outdated script
 globalversion = loadstring(game:HttpGet('https://raw.githubusercontent.com/laderite/zenx/main/version.lua'))()
 local promptOverlay = game.CoreGui:FindFirstChild("RobloxPromptGui"):FindFirstChild("promptOverlay")
 promptOverlay.DescendantAdded:Connect(function(Err)
@@ -27,7 +28,7 @@ end
 load('mod')
 load('log')
 load('commands')
-
+-- detect if outdated script
 function detectOutdatedScript()
     if not getgenv().settings or not getgenv().settings['version'] then
         return true
@@ -62,7 +63,7 @@ function getRandomButtonResponse()
     local s = {"ok i go now ty","ight thanks sexy man","alright bro thanks :))))","ty baby girl","Ok UwU","omg outdated script?!?! ok i go get new script cuz im pro :D"}
     return tostring(s[math.random(1,getTableSize(s))])
 end
-
+-- detect if outdated script
 if detectOutdatedScript() then
     local prompt = loadstring(game:HttpGet('https://raw.githubusercontent.com/laderite/zenx/main/prompt.lua', true))()
     prompt.createPrompt("OUTDATED SCRIPT", "Hi, you're using an outdated script. Go join the discord or head over to the v3rm thread to get the updated script.", getRandomButtonResponse(), true, function(close)
@@ -287,6 +288,17 @@ function farmraid()
                         end
                     end
                 end
+            end
+        end
+        if workspace.misc:FindFirstChild('Blackhole') then
+            local s,e = pcall(function()
+                repeat
+                    task.wait()
+                    game.Players.LocalPlayer.Character:WaitForChild('HumanoidRootPart').CFrame = CFrame.new(100,500,100)
+                until not workspace.misc.Blackhole:IsDescendantOf(workspace.misc)
+            end)
+            if e then
+                print(s)
             end
         end
         if workspace.Mobs:FindFirstChild('Hive Guard') then
@@ -565,34 +577,36 @@ end)
 game:GetService("Players").LocalPlayer.PlayerGui.Chat.Frame.ChatChannelParentFrame["Frame_MessageLogDisplay"].Scroller.ChildAdded:connect(function(v)
     if v:IsA('Frame') then
         local text = v:WaitForChild('TextLabel')
-        for _,items in pairs(getgenv().settings['webhook']['itemnotifier']) do
-            if string.find(text.Text, items) then
-                    local data = 
-                    {
-                        ["content"] = "@everyone";
-                        ["embeds"] = {{
-                            ["title"] = "Item Notifier"; 
-                            ["description"] = [[
-                                **User**: ||]] .. game.Players.LocalPlayer.Name .. [[||
-                                **Item Name**: ]] .. items,
-                            ["color"] = tonumber(0xcfd9de);
-                            ["footer"] = {
-                                ["text"] = "RPG Simulator - Zen X";
-                                ["icon_url"] = "https://cdn.discordapp.com/attachments/626185393707941889/940776650700914708/228-2280201_transparent-zen-circle-png-zen-circle-png-png-removebg-preview-removebg-preview.png"; -- The image icon you want your footer to have
-                            };
-                            ["timestamp"] = DateTime.now():ToIsoDate();
-                            
-                        }}
+        if getgenv().settings['webhook']['enabled'] then
+            for _,items in pairs(getgenv().settings['webhook']['itemnotifier']) do
+                if string.find(text.Text, items) then
+                        local data = 
+                        {
+                            ["content"] = "@everyone";
+                            ["embeds"] = {{
+                                ["title"] = "Item Notifier"; 
+                                ["description"] = [[
+                                    **User**: ||]] .. game.Players.LocalPlayer.Name .. [[||
+                                    **Item Name**: ]] .. items,
+                                ["color"] = tonumber(0xcfd9de);
+                                ["footer"] = {
+                                    ["text"] = "RPG Simulator - Zen X";
+                                    ["icon_url"] = "https://cdn.discordapp.com/attachments/626185393707941889/940776650700914708/228-2280201_transparent-zen-circle-png-zen-circle-png-png-removebg-preview-removebg-preview.png"; -- The image icon you want your footer to have
+                                };
+                                ["timestamp"] = DateTime.now():ToIsoDate();
+                                
+                            }}
+                        }
+                    
+                    local newdata = game:GetService("HttpService"):JSONEncode(data)
+                    
+                    local headers = {
+                    ["content-type"] = "application/json"
                     }
-                
-                local newdata = game:GetService("HttpService"):JSONEncode(data)
-                
-                local headers = {
-                ["content-type"] = "application/json"
-                }
-                request = http_request or request or HttpPost or syn.request
-                local abcdef = {Url = getgenv().settings['webhook']['url'], Body = newdata, Method = "POST", Headers = headers}
-                request(abcdef)
+                    request = http_request or request or HttpPost or syn.request
+                    local abcdef = {Url = getgenv().settings['webhook']['url'], Body = newdata, Method = "POST", Headers = headers}
+                    request(abcdef)
+                end
             end
         end
     end
@@ -619,3 +633,4 @@ if getTypeOfServer() == "Raid" then
         end
     end
 end
+
