@@ -1,5 +1,3 @@
---// code is messy pls \\--
-
 repeat wait() until game:IsLoaded()
 repeat wait() until game:GetService("Players").LocalPlayer:WaitForChild('Loaded').Value == true
 repeat wait() until (#game:GetService("Workspace"):WaitForChild('Mobs'):GetChildren()) > 0
@@ -8,6 +6,7 @@ if workspace.Mobs:FindFirstChild("Queen's Egg") then
 end
 
 abort = false
+-- detect if outdated script
 globalversion = loadstring(game:HttpGet('https://raw.githubusercontent.com/laderite/zenx/main/version.lua'))()
 local promptOverlay = game.CoreGui:FindFirstChild("RobloxPromptGui"):FindFirstChild("promptOverlay")
 promptOverlay.DescendantAdded:Connect(function(Err)
@@ -28,7 +27,7 @@ end
 load('mod')
 load('log')
 load('commands')
--- detect if outdated script
+
 function detectOutdatedScript()
     if not getgenv().settings or not getgenv().settings['version'] then
         return true
@@ -63,7 +62,7 @@ function getRandomButtonResponse()
     local s = {"ok i go now ty","ight thanks sexy man","alright bro thanks :))))","ty baby girl","Ok UwU","omg outdated script?!?! ok i go get new script cuz im pro :D"}
     return tostring(s[math.random(1,getTableSize(s))])
 end
--- detect if outdated script
+
 if detectOutdatedScript() then
     local prompt = loadstring(game:HttpGet('https://raw.githubusercontent.com/laderite/zenx/main/prompt.lua', true))()
     prompt.createPrompt("OUTDATED SCRIPT", "Hi, you're using an outdated script. Go join the discord or head over to the v3rm thread to get the updated script.", getRandomButtonResponse(), true, function(close)
@@ -465,11 +464,11 @@ coroutine.resume(coroutine.create(function()
 end))
 
 for _,v in pairs(workspace.Mobs:GetChildren()) do
-    if v.Name == "Damage Egg" then
+    if v.Name == "Damage Egg" or v.Name == "Egg" then
         v:Destroy()
     end
 end
-
+local startTime = tick()
 game.StarterGui:SetCore("SendNotification", {
 Title = "Discord";
 Text = "the discord is https://discord.com/invite/mwfAyYZ57P";
@@ -508,7 +507,7 @@ game:GetService("Players").LocalPlayer.PlayerGui.Partylist.Redo.Count:GetPropert
         if getgenv().settings['webhook']['pingeveryone'] then
             content = "@everyone"
         end
-        if getgenv().settings['webhook']['discordid'] then
+        if getgenv().settings['webhook']['discordid'] ~= nil then
             content = '<@' .. getgenv().settings['webhook']['discordid'] .. ">"
         end
         if not content then
@@ -519,35 +518,20 @@ game:GetService("Players").LocalPlayer.PlayerGui.Partylist.Redo.Count:GetPropert
             ["embeds"] = {
                 {
                     ["title"] = "Successful Raid",
-                    ["fields"] = {
-                        {
-                            name = "Gold",
-                            value = game:GetService("Players").LocalPlayer.PlayerGui.StatsUI.Frame.Currency.Gold.Amount.Text,
-                            inline = true,
-                        },
-                        {
-                            name = "Crystals",
-                            value = game:GetService("Players").LocalPlayer.PlayerGui.StatsUI.Frame.Currency.Crystal.Amount.Text,
-                            inline = true,
-                        },
-                        {
-                            name = "Raid Coins",
-                            value = game:GetService("Players").LocalPlayer.PlayerGui.StatsUI.Frame.Currency.Coins.Amount.Text,
-                            inline = true,
-                        },
-                        {
-                            name = "Level",
-                            value = game:GetService("Players").LocalPlayer.PlayerGui.Playerlist.Container.ScrollingFrame[game.Players.LocalPlayer.Name].Stats.Level.Text,
-                            inline = true,
-                        },
-                        {
-                            name = "Completion Time",
-                            value = tostring(tick() - startTime) .. 's',
-                            inline = true
-                        },
-                    },
+                    ['description'] = [[
+                        **User**: ||]] .. game.Players.LocalPlayer.Name .. [[||
+                        **Level**: ]] ..  game:GetService("Players").LocalPlayer.PlayerGui.Playerlist.Container.ScrollingFrame[game.Players.LocalPlayer.Name].Stats.Level.Text .. [[
+                        **Gold**: ]] .. game:GetService("Players").LocalPlayer.PlayerGui.StatsUI.Frame.Currency.Gold.Amount.Text .. [[
+                        **Crystals**: ]] .. game:GetService("Players").LocalPlayer.PlayerGui.StatsUI.Frame.Currency.Crystal.Amount.Text .. [[
+                        **Raid Coins**: ]] .. game:GetService("Players").LocalPlayer.PlayerGui.StatsUI.Frame.Currency.Coins.Amount.Text .. [[ 
+                        **Completion Time**: ]] .. tostring(tick() - startTime) .. 's'
                     ["type"] = "rich",
-                    ["color"] = tonumber(0x00FF00),
+                    ["color"] = tonumber(0xcfd9de),
+                    ["footer"] = {
+                        ["text"] = "RPG Simulator - Zen X";
+                        ["icon_url"] = "https://cdn.discordapp.com/attachments/626185393707941889/940776650700914708/228-2280201_transparent-zen-circle-png-zen-circle-png-png-removebg-preview-removebg-preview.png"; -- The image icon you want your footer to have
+                    },
+                    ["timestamp"] = DateTime.now():ToIsoDate(),
                 }
             }
         }
@@ -633,4 +617,3 @@ if getTypeOfServer() == "Raid" then
         end
     end
 end
-
