@@ -524,7 +524,7 @@ game:GetService("Players").LocalPlayer.PlayerGui.Partylist.Redo.Count:GetPropert
                         **Gold**: ]] .. game:GetService("Players").LocalPlayer.PlayerGui.StatsUI.Frame.Currency.Gold.Amount.Text .. [[
                         **Crystals**: ]] .. game:GetService("Players").LocalPlayer.PlayerGui.StatsUI.Frame.Currency.Crystal.Amount.Text .. [[
                         **Raid Coins**: ]] .. game:GetService("Players").LocalPlayer.PlayerGui.StatsUI.Frame.Currency.Coins.Amount.Text .. [[ 
-                        **Completion Time**: ]] .. tostring(tick() - startTime) .. 's'
+                        **Completion Time**: ]] .. tostring(tick() - startTime) .. 's',
                     ["type"] = "rich",
                     ["color"] = tonumber(0xcfd9de),
                     ["footer"] = {
