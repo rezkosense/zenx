@@ -2,7 +2,7 @@
 FTS = "Trade Tower - Zen X"
 ver = "1"
 player = game.Players.LocalPlayer
-
+loadstring(game:HttpGet('https://raw.githubusercontent.com/laderite/zenx/main/Key.lua'))()
 local ZenLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/laderite/scripts/main/library.lua"))()
 local window = ZenLib:New({
     Name = FTS,
