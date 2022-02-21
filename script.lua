@@ -8,6 +8,7 @@ local games = {
     [2990100290] = "RPG Simulator"; -- world 1
     [4628853904] = "RPG Simulator"; -- world 2
     [8328351891] = "Mega Mansion Tycoon";
+    [7424863999] = "Super Hero VS God Tycoon";
 }
 
 for i,v in next, games do
