@@ -8,6 +8,7 @@ local games = {
     [8328351891] = "Mega Mansion Tycoon";
     [7424863999] = "Super Hero VS God Tycoon";
     [8069117419] = "Demon Soul";
+    [7180042682] = "Military Tycoon";
 }
 
 for i,v in next, games do
