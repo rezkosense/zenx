@@ -20,7 +20,6 @@ local player = players.LocalPlayer
 local chr = player.Character
 local hrp = chr:WaitForChild('HumanoidRootPart')
 local KO = chr.BodyEffects["K.O"]
-local module = loadstring(game:HttpGet"https://raw.githubusercontent.com/LeoKholYt/roblox/main/lk_serverhop.lua")()
 
 local __index
 __index = hookmetamethod(game, "__index", function(t, k)
@@ -35,6 +34,20 @@ __index = hookmetamethod(game, "__index", function(t, k)
 end)
 
 -- // Functions
+
+function hop()
+    local x = {}
+    for _, v in ipairs(game:GetService("HttpService"):JSONDecode(game:HttpGetAsync("https://games.roblox.com/v1/games/" .. game.PlaceId .. "/servers/Public?sortOrder=Asc&limit=100")).data) do
+        if type(v) == "table" and v.maxPlayers > v.playing and v.id ~= game.JobId then
+            x[#x + 1] = v.id
+        end
+    end
+    if #x > 0 then
+        game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, x[math.random(1, #x)])
+    else
+        print('failed to find server')
+    end
+end
 
 function forceReset()
     chr:BreakJoints()
@@ -93,7 +106,7 @@ function ATM()
     end
     if getgenv().serverhop then
         wait()
-        module:Teleport(game.PlaceId)
+        hop()
         wait()
         ATM()
     else 
