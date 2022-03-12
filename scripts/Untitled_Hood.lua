@@ -1,3 +1,4 @@
+
 repeat wait() until game:IsLoaded()
 pcall(function()
     repeat wait() until game.Players.LocalPlayer.Character:FindFirstChild('FULLY_LOADED_CHAR')
@@ -132,7 +133,7 @@ spawn(function()
 end)
 repeat wait() until aad
 spawn(function()
-    while wait(30) do
+    while wait(100) do
         if getgenv().serverhop then module:Teleport(game.PlaceId) end
     end
 end)
