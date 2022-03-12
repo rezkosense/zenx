@@ -139,6 +139,7 @@ function check()
     end
     aad = true
 end
+
 spawn(function()
     while wait() do
         check()
@@ -147,7 +148,18 @@ end)
 repeat wait() until aad
 spawn(function()
     while wait(100) do
-        if getgenv().serverhop then module:Teleport(game.PlaceId) end
+        if getgenv().serverhop then hop() end
     end
 end)
+game.StarterGui:SetCore("SendNotification", {
+    Title = "KEY SYSTEM";
+    Text = "we are gonna add a key system soon (probably in a couple hours, only have to input once)";
+    Duration = 9e9;
+})
+
+game.StarterGui:SetCore("SendNotification", {
+    Title = "DISCORD";
+    Text = "join the discord @ .gg/zenhub (the key will be in there also when we add the key system.)";
+    Duration = 9e9;
+})
 ATM()
