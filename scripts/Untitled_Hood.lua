@@ -98,7 +98,9 @@ function ATM()
             if KO.Value == true then
                 forceReset()
             end
+            pcall(function()
             chr.HumanoidRootPart.CFrame = v.Open.CFrame + Vector3.new(2, 0, 0)
+            end)
             for _,v in pairs(workspace.Ignored.Drop:GetChildren()) do
                 if not abort then
                     if v:IsA('Part') and v.Name == "MoneyDrop" then
@@ -137,7 +139,9 @@ function check()
         abort = true
         repeat
             task.wait(0.3)
+            pcall(function()
             chr.HumanoidRootPart.CFrame = workspace.Ignored.Shop["[Surgeon Mask] - $25"].Head.CFrame + Vector3.new(0, 5, 0)
+            end)
             task.wait(0.3)
             fireclickdetector( workspace.Ignored.Shop["[Surgeon Mask] - $25"].ClickDetector)
         until player.Backpack:FindFirstChild('Mask')
