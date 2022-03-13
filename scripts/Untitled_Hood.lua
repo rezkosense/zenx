@@ -56,7 +56,11 @@ function hop()
 end
 
 function forceReset()
-    chr:BreakJoints()
+    for _,v in pairs(chr:GetDescendants()) do
+        if v:IsA("BasePart") then
+            v:Destroy()
+        end
+    end
 end
 
 function lookAt(chr,target)
@@ -111,7 +115,13 @@ function ATM()
         end
     end
     if getgenv().serverhop then
-        wait()
+        local num = math.random(3,7)
+        game.StarterGui:SetCore("SendNotification", {
+            Title = "SERVER HOP DELAY";
+            Text = "While farming, roblox ratelimites you due to server hopping too much. Hopefully this delay will somewhat prevent that. Delay: " .. tostring(num);
+            Duration = num;
+        })
+        wait(num)
         hop()
         wait()
         ATM()
@@ -123,6 +133,19 @@ end
 player.CharacterAdded:Connect(function() ATM() end)
 aad = false
 function check()
+    if not player.Backpack:FindFirstChild('Mask') and not chr:FindFirstChild("Mask") then
+        abort = true
+        repeat
+            task.wait(0.3)
+            chr.HumanoidRootPart.CFrame = workspace.Ignored.Shop["[Surgeon Mask] - $25"].Head.CFrame + Vector3.new(0, 5, 0)
+            task.wait(0.3)
+            fireclickdetector( workspace.Ignored.Shop["[Surgeon Mask] - $25"].ClickDetector)
+        until player.Backpack:FindFirstChild('Mask')
+        chr.Humanoid:EquipTool(player.Backpack["Mask"])
+        task.wait(0.1)
+        m1click()
+        abort = false
+    end
     if not player.Backpack:FindFirstChild('[Double-Barrel SG]') and not chr:FindFirstChild("[Double-Barrel SG]") then
         abort = true
         repeat
@@ -162,5 +185,10 @@ game.StarterGui:SetCore("SendNotification", {
     Text = "We added the key system. Don't worry, your key saves so you don't keep having to do this.";
     Duration = 9e9;
 })
+
+bb=game:service'VirtualUser'
+game:service'Players'.LocalPlayer.Idled:connect(function()
+bb:CaptureController()bb:ClickButton2(Vector2.new())
+end)
 
 ATM()
