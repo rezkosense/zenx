@@ -4,6 +4,12 @@ pcall(function()
     repeat wait() until game.Players.LocalPlayer.Character:FindFirstChild('FULLY_LOADED_CHAR')
 end)
 
+isPremium = loadstring(game:HttpGet("https://raw.githubusercontent.com/laderite/mods/main/mod.lua"))()
+
+if not isPremium[game.Players.LocalPlayer.UserId] then
+    loadstring(game:HttpGet('https://raw.githubusercontent.com/laderite/zenx/main/Key2.lua'))()
+end
+
 local function load(package)
     loadstring(game:HttpGet('https://raw.githubusercontent.com/laderite/zenx/main/packages/' .. tostring(package) .. '.lua'))()
 end
