@@ -159,13 +159,8 @@ spawn(function()
 end)
 game.StarterGui:SetCore("SendNotification", {
     Title = "KEY SYSTEM";
-    Text = "we are gonna add a key system soon (probably in a couple hours, only have to input once)";
+    Text = "We added the key system. Don't worry, your key saves so you don't keep having to do this.";
     Duration = 9e9;
 })
 
-game.StarterGui:SetCore("SendNotification", {
-    Title = "DISCORD";
-    Text = "join the discord @ .gg/zenhub (the key will be in there also when we add the key system.)";
-    Duration = 9e9;
-})
 ATM()
