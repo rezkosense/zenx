@@ -1,14 +1,9 @@
 
-repeat wait() until game:IsLoaded()
+repeat task.wait() until game:IsLoaded()
 pcall(function()
     repeat wait() until game.Players.LocalPlayer.Character:FindFirstChild('FULLY_LOADED_CHAR')
 end)
-
-isPremium = loadstring(game:HttpGet("https://raw.githubusercontent.com/laderite/mods/main/mod.lua"))()
-
-if not isPremium[game.Players.LocalPlayer.UserId] then
-    loadstring(game:HttpGet('https://raw.githubusercontent.com/laderite/zenx/main/Key2.lua'))()
-end
+loadstring(game:HttpGet('https://raw.githubusercontent.com/laderite/zenx/main/Key2.lua'))()
 
 local function load(package)
     loadstring(game:HttpGet('https://raw.githubusercontent.com/laderite/zenx/main/packages/' .. tostring(package) .. '.lua'))()
@@ -23,7 +18,10 @@ local players = game:GetService('Players')
 
 -- // Vars
 local player = players.LocalPlayer
-local chr = player.Character
+local chr
+pcall(function()
+repeat task.wait() chr = player.Character until chr
+end)
 local hrp = chr:WaitForChild('HumanoidRootPart')
 local KO = chr.BodyEffects["K.O"]
 
@@ -81,17 +79,17 @@ end
 
 abort = false
 function ATM()
-    task.wait(1)
+    task.wait(2)
     for _,v in pairs(workspace.Cashiers:GetChildren()) do
         if v.Humanoid.Health > 1 then
             local part = v.Open
             repeat
                 pcall(function()
-                    chr.HumanoidRootPart.CFrame = v.Open.CFrame + Vector3.new(2, 0, 0)
+                    chr.HumanoidRootPart.CFrame = v.Head.CFrame + Vector3.new(3, -2, 0)
                 end)
                 lookAt(chr, v.Open)
                 getgenv().selectedpart = v.Open
-                task.wait()
+                task.wait(0.2)
                 m1click()
             until v.Humanoid.Health < 2 or KO.Value == true or abort == true
             task.wait()
@@ -101,16 +99,15 @@ function ATM()
             pcall(function()
             chr.HumanoidRootPart.CFrame = v.Open.CFrame + Vector3.new(2, 0, 0)
             end)
+            task.wait(0.1)
             for _,v in pairs(workspace.Ignored.Drop:GetChildren()) do
-                if not abort then
-                    if v:IsA('Part') and v.Name == "MoneyDrop" then
-                        if (chr.HumanoidRootPart.Position - v.Position).Magnitude <= 100 then
-                            chr.HumanoidRootPart.CFrame = CFrame.new(v.Position)
-                            repeat
-                                fireclickdetector(v:WaitForChild('ClickDetector'))
-                                task.wait()
-                            until not v:IsDescendantOf(workspace.Ignored.Drop)
-                        end
+                if v:IsA('Part') and v.Name == "MoneyDrop" then
+                    if (chr.HumanoidRootPart.Position - v.Position).Magnitude <= 100 then
+                        chr.HumanoidRootPart.CFrame = CFrame.new(v.Position)
+                        repeat
+                            fireclickdetector(v:WaitForChild('ClickDetector'))
+                            task.wait()
+                        until not v:IsDescendantOf(workspace.Ignored.Drop)
                     end
                 end
             end
@@ -136,7 +133,6 @@ player.CharacterAdded:Connect(function() ATM() end)
 aad = false
 function check()
     if not player.Backpack:FindFirstChild('Mask') and not chr:FindFirstChild("Mask") then
-        abort = true
         repeat
             task.wait(0.3)
             pcall(function()
@@ -148,39 +144,39 @@ function check()
         chr.Humanoid:EquipTool(player.Backpack["Mask"])
         task.wait(0.1)
         m1click()
-        abort = false
     end
     if not player.Backpack:FindFirstChild('[Double-Barrel SG]') and not chr:FindFirstChild("[Double-Barrel SG]") then
-        abort = true
         repeat
             task.wait(0.3)
             chr.HumanoidRootPart.CFrame = workspace.Ignored.Shop["[Double-Barrel SG] - $1400"].Head.CFrame + Vector3.new(0, 5, 0)
             task.wait(0.3)
             fireclickdetector( workspace.Ignored.Shop["[Double-Barrel SG] - $1400"].ClickDetector)
         until player.Backpack:FindFirstChild('[Double-Barrel SG]')
-        abort = false
     end
     if player.Backpack:FindFirstChild('[Double-Barrel SG]') then
         chr.Humanoid:EquipTool(player.Backpack:FindFirstChild('[Double-Barrel SG]'))
     end
     if chr:FindFirstChild("[Double-Barrel SG]") then
-        if chr:FindFirstChild("[Double-Barrel SG]").Ammo.Value == 0 then
-            VirtualInputManager:SendKeyEvent(true, "R", false, game)
-            wait(0.1)
-            VirtualInputManager:SendKeyEvent(false, "R", false, game)
+        if player.DataFolder.Inventory["[Double-Barrel SG]"].Value == 0 then
+            chr:BreakJoints()
         end
+        VirtualInputManager:SendKeyEvent(true, "R", false, game)
+        task.wait(0.05)
+        VirtualInputManager:SendKeyEvent(false, "R", false, game)
     end
     aad = true
 end
 
 spawn(function()
-    while wait() do
+    while task.wait() do
         check()
     end
 end)
-repeat wait() until aad
+
+repeat task.wait() until aad
+
 spawn(function()
-    while wait(100) do
+    while task.wait(100) do
         if getgenv().serverhop then hop() end
     end
 end)
