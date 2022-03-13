@@ -102,13 +102,13 @@ function ATM()
             task.wait(0.1)
             for _,v in pairs(workspace.Ignored.Drop:GetChildren()) do
                 if v:IsA('Part') and v.Name == "MoneyDrop" then
-                    if (chr.HumanoidRootPart.Position - v.Position).Magnitude <= 100 then
-                        chr.HumanoidRootPart.CFrame = CFrame.new(v.Position)
-                        repeat
-                            fireclickdetector(v:WaitForChild('ClickDetector'))
-                            task.wait()
-                        until not v:IsDescendantOf(workspace.Ignored.Drop)
-                    end
+                    repeat
+                        pcall(function()
+                            chr.HumanoidRootPart.CFrame = CFrame.new(v.Position)
+                        end)
+                        fireclickdetector(v:WaitForChild('ClickDetector'))
+                        task.wait()
+                    until not v:IsDescendantOf(workspace.Ignored.Drop)
                 end
             end
         end
