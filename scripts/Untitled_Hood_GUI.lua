@@ -110,26 +110,6 @@ for _,v in pairs(defaultConfig) do
 end
 
 -- // Anticheat
-local __namecall
-__namecall = hookmetamethod(game, "__namecall", function(...)
-    local args = {...}
-    local self = args[1]
-    local method = getnamecallmethod()
-    local caller = getcallingscript()
-
-    if (method == "FireServer" and self == MainEvent and tablefind(Flags, args[2])) then
-        return
-    end
-
-    if (not checkcaller() and getfenv(2).crash) then
-        hookfunction(getfenv(2).crash, function()
-            warn("Crash Attempt") 
-        end)
-    end
-    
-    return __namecall(...)
-end)
-
 local __index
 __index = hookmetamethod(game, "__index", function(t, k)
     if (not checkcaller() and t:IsA("Humanoid") and (k == "WalkSpeed" or k == "JumpPower")) then
@@ -576,8 +556,8 @@ combat:Toggle('Anti Stomp',false,"Toggle",function(v)
     antistomp = v
 end)
 
-combat:Button('Godmode',function()
-    loadstring(game:HttpGet('https://raw.githubusercontent.com/cjdjmj/untitledhoodscript/main/README.md'))()
+combat:Button('Godmode (PATCHED)',function()
+    
 end)
 
 
