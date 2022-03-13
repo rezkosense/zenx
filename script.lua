@@ -9,6 +9,7 @@ local games = {
     [7424863999] = "Super Hero VS God Tycoon";
     [8069117419] = "Demon Soul";
     [7180042682] = "Military Tycoon";
+    [7800644383] = "Untitled Hood GUI";
 }
 
 for i,v in next, games do
