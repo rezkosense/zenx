@@ -3,7 +3,7 @@ if not game:IsLoaded() then
     usingAutoExecute = true
     repeat wait() until game:IsLoaded()
 end
-
+local id = game.Players.LocalPlayer.UserId
 isPremium = loadstring(game:HttpGet("https://raw.githubusercontent.com/laderite/mods/main/mod.lua"))()
 
 if not isPremium[game.Players.LocalPlayer.UserId] then
@@ -184,12 +184,17 @@ coroutine.resume(coroutine.create(function()
     end
 end))
 
+local VirtualInputManager = game:GetService('VirtualInputManager')
+local function m1click() 
+    VirtualInputManager:SendMouseButtonEvent(0,0,0,true,game,0)
+    task.wait()
+    VirtualInputManager:SendMouseButtonEvent(0,0,0,false,game,0)
+end
 loader:SetProgress(332)
 -- Loading Tabs
 local maintab = window:Tab("Main")
 local combattab = window:Tab('Combat')
 local autofarmtab = window:Tab("Autofarm")
-local targettab = window:Tab("Target")
 local teleporttab = window:Tab('Teleports')
 local animationtab = window:Tab('Animations')
 local cashtab = window:Tab('Cash')
@@ -200,11 +205,11 @@ local main = maintab:Section('Main 1')
 local main2 = maintab:Section('Main 2')
 local combat = combattab:Section('Combat')
 local autofarm = autofarmtab:Section('Autofarm')
-local target = targettab:Section('Target')
 local dahoodian = animationtab:Section('Dahoodian Animations')
 local animation = animationtab:Section('Animations')
 local cash = cashtab:Section('Cash')
 local teleport = teleporttab:Section('Teleports')
+local selectedplayer
 
 teleport:Button('Main spot (burger/taco)',function()
     chr.HumanoidRootPart.CFrame = CFrame.new(-233.06834411621094, 22.65300750732422, -1014.385986328125)
@@ -271,6 +276,20 @@ end)
 cash:Toggle('Auto Drop 10k',false,"Toggle",function(v)
     while v and wait() do
         game:GetService("ReplicatedStorage"):FindFirstChild(".gg/untitledhood"):FireServer("DropMoney","10000")
+    end
+end)
+
+cash:Toggle('Cash Aura',false,"Toggle",function(v)
+    while v and wait() do
+        for _,v in pairs(workspace.Ignored.Drop:GetChildren()) do
+            if v:IsA('Part') and v.Name == "MoneyDrop" then
+                pcall(function()
+                    if (player.Character.HumanoidRootPart.Position - v.Position).Magnitude <= 100 then
+                        fireclickdetector(v:WaitForChild('ClickDetector'))
+                    end
+                end)
+            end
+        end
     end
 end)
 
@@ -388,6 +407,32 @@ main:Slider('Fly Speed', 20, 100, 1, 2, "Slider",function(v)
     FLYSPEED = v
 end)
 
+main:Button('Invisible',function()
+    local oldpos = chr.HumanoidRootPart.CFrame
+    chr.HumanoidRootPart.CFrame = CFrame.new(318.499, 93.825, -919.513)
+    wait(0.1)
+    chr:BreakJoints()
+    wait(0.1)
+    chr.HumanoidRootPart.CFrame = oldpos
+end)
+
+main:Button('Hide User',function()
+    
+    if not player.Backpack:FindFirstChild('Mask') and not chr:FindFirstChild("Mask") then
+        repeat
+            task.wait(0.3)
+            pcall(function()
+            chr.HumanoidRootPart.CFrame = workspace.Ignored.Shop["[Surgeon Mask] - $25"].Head.CFrame + Vector3.new(0, 5, 0)
+            end)
+            task.wait(0.3)
+            fireclickdetector( workspace.Ignored.Shop["[Surgeon Mask] - $25"].ClickDetector)
+        until player.Backpack:FindFirstChild('Mask')
+        chr.Humanoid:EquipTool(player.Backpack["Mask"])
+        task.wait(0.1)
+        m1click()
+    end
+end)
+
 main:Button('Destroy Mask',function()
     pcall(function()
         chr['In-gameMask']:FindFirstChildWhichIsA('Model'):Destroy()
@@ -501,8 +546,17 @@ main:Button('Free Korblox [CLIENT]',function()
     chr.RightFoot.Transparency = "1"
 end)
 
+main:Button('Free Headless [FE]',function()
+    player.Character.Head:BreakJoints()
+    player.Character.Head.Position = Vector3.new(0,99999999999999,0)
+end)
+
 main:Button('Free Headless [CLIENT]',function(v)
     chr.Head.MeshId = 134082579
+end)
+
+main:Button('Destroy Boombox',function()
+    player.Character.BOOMBOXHANDLE:Destroy()
 end)
 
 main2:Toggle('Trash Talk',false,"Toggle",function(v)
@@ -523,6 +577,22 @@ main2:Bind('Trash Talk Keybind',Enum.KeyCode.J,false,"BindNormal",function()
     end
 end)
 
+main2:Bind('Buy Armor',Enum.KeyCode.LeftAlt,false,"BindNormal",function()
+    if not buyingarmor then
+        buyingarmor = true
+        local click = workspace.Ignored.Shop["[High-Medium Armor] - $2300"].ClickDetector
+        local pos = click.Parent.Head.Position
+        oldpos = player.Character.HumanoidRootPart.CFrame
+        repeat
+            task.wait()
+            player.Character.HumanoidRootPart.CFrame = CFrame.new(pos)
+            fireclickdetector(click)
+        until player.Character.BodyEffects.Armor.Value == 100 or player.DataFolder.Currency.Value <= 2300 or player.Character.BodyEffects.Armor:FindFirstChild('God')
+        player.Character.HumanoidRootPart.CFrame = oldpos
+        buyingarmor = false
+    end
+end)
+
 main2:Toggle('Key to TP',false,"Toggle",function(v)
     keytotp = v
 end)
@@ -535,6 +605,30 @@ main2:Bind('Key to TP Keybind',Enum.KeyCode.Z,false,"BindNormal",function()
     end
 end)
 
+main2:Toggle('NoClip',false,"Toggle",function(v)
+    while v and task.wait() do
+        player.Character.Humanoid:ChangeState(11)
+    end
+end)
+
+main2:Toggle('Anti Grab',false,"Toggle",function(v)
+    while v and task.wait() do
+        local const = player.Character:FindFirstChild("GRABBING_CONSTRAINT")
+        if const then
+            const:Destroy()
+            wait(0.05)
+            player.Character:FindFirstChildWhichIsA('Humanoid').Sit = true
+        end
+    end
+end)
+
+main2:Toggle('Fullbright',false,"Toggle",function(v)
+    if v then
+        game:GetService("Lighting").GlobalShadows = false
+    else
+        game:GetService("Lighting").GlobalShadows = true
+    end
+end)
 
 main2:Slider('Walkspeed', 16, 100, 1, 1, "Slider",function(v)
     chr.Humanoid.WalkSpeed = v
@@ -655,29 +749,46 @@ autofarm:Button('Start Autofarm (Cant be stopped)',function()
 end)
 
 
-if isPremium[game.Players.LocalPlayer.UserId] then
+if isPremium[id] then
     local premiumnotice = premiumtab:Section("Notice")
     premiumnotice:Label('Thanks for being a premium user! Enjoy these features.')
     local premium = premiumtab:Section("Premium Features")
 
-    premium:Toggle("adax",false,"Toggle",function()
+    premium:Textbox('Target',true,function(v)
+        selectedplayer = v
     end)
 
-    premium:Button('yo',function()
+    premium:Toggle('Auto Kill',false,"Toggle",function(v)
+        autokill = v
     end)
+
+    premium:Toggle('Auto Save',false,"Toggle",function(v)
+    end)
+
+    premium:Button('Teleport',function()
+        pcall(function()
+            player.Character.HumanoidRootPart.CFrame = players[selectedplayer].Character.HumanoidRootPart.CFrame
+        end)
+    end)
+
+    premium:Button('Kill',function()
+    end)
+
+    premium:Button('Save Player',function()
+    end)
+
 else
     local premium = premiumtab:Section("Unauthorised Access")
     premium:Label("This section is only exclusive to Zen X Premium users.")
     premium:Label("You can purchase premium in the discord server. ($5/1.5k)")
     premium:Label(discord)
+    premium:Label('Current features (in dev): Target, tp, autokill & stomp, auto save')
 end
 
 -- load all features
 for _,v in pairs(Settings) do
     getgenv()[_] = v
 end
-
-player.CharacterAdded:Connect(function() ATM() end)
 
 loader:SetProgress(445)
 pcall(function()
