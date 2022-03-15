@@ -109,24 +109,6 @@ for _,v in pairs(defaultConfig) do
     getgenv()[_] = v
 end
 
--- // Anticheat
-local __index
-__index = hookmetamethod(game, "__index", function(t, k)
-    if (not checkcaller() and t:IsA("Humanoid") and (k == "WalkSpeed" or k == "JumpPower")) then
-        return SpoofTable[k]
-    end
-    return __index(t, k)
-end)
-
-local __newindex
-__newindex = hookmetamethod(game, "__newindex", function(t, k, v)
-    if (not checkcaller() and t:IsA("Humanoid") and (k == "WalkSpeed" or k == "JumpPower")) then
-        SpoofTable[k] = v
-        return
-    end
-    return __newindex(t, k, v)
-end)
-
 -- // Functions
 function disableSeats()
     for i,v in pairs(worksapce:GetDescendants()) do
@@ -294,6 +276,10 @@ cash:Toggle('Cash Aura',false,"Toggle",function(v)
 end)
 
 cash:Label('Will revamp soon')
+
+chr.Humanoid:GetPropertyChangedSignal('WalkSpeed'):connect(function()
+    chr.Humanoid.WalkSpeed = dawalkspeed
+end)
 
 FLYSPEED = 20
 main:Button('Fly [X]',function()
@@ -583,11 +569,11 @@ main2:Bind('Buy Armor',Enum.KeyCode.LeftAlt,false,"BindNormal",function()
         local click = workspace.Ignored.Shop["[High-Medium Armor] - $2300"].ClickDetector
         local pos = click.Parent.Head.Position
         oldpos = player.Character.HumanoidRootPart.CFrame
-        repeat
-            task.wait()
-            player.Character.HumanoidRootPart.CFrame = CFrame.new(pos)
-            fireclickdetector(click)
-        until player.Character.BodyEffects.Armor.Value == 100 or player.DataFolder.Currency.Value <= 2300 or player.Character.BodyEffects.Armor:FindFirstChild('God')
+        task.wait()
+        player.Character.HumanoidRootPart.CFrame = CFrame.new(pos)
+        task.wait(0.2)
+        fireclickdetector(click)
+        task.wait(0.1)
         player.Character.HumanoidRootPart.CFrame = oldpos
         buyingarmor = false
     end
@@ -631,7 +617,7 @@ main2:Toggle('Fullbright',false,"Toggle",function(v)
 end)
 
 main2:Slider('Walkspeed', 16, 100, 1, 1, "Slider",function(v)
-    chr.Humanoid.WalkSpeed = v
+    dawalkspeed = v
 end)
 
 main2:Slider('Jumppower', 50, 200, 1, 1, "Slider",function(v)
@@ -650,8 +636,9 @@ combat:Toggle('Anti Stomp',false,"Toggle",function(v)
     antistomp = v
 end)
 
-combat:Button('Godmode (PATCHED)',function()
-    
+combat:Button('Godmode (DONT USE WHEN KNOCKED)',function()
+    repeat wait() until KO.Value == false
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/cjdjmj/untitledhoodscript/main/README.md", true))()
 end)
 
 
