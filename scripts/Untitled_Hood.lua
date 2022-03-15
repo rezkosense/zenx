@@ -114,7 +114,7 @@ function ATM()
         end
     end
     if getgenv().serverhop then
-        local num = math.random(3,7)
+        local num = math.random(5,12)
         game.StarterGui:SetCore("SendNotification", {
             Title = "SERVER HOP DELAY";
             Text = "While farming, roblox ratelimites you due to server hopping too much. Hopefully this delay will somewhat prevent that. Delay: " .. tostring(num);
