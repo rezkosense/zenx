@@ -658,9 +658,7 @@ combat:Toggle('Anti Stomp',false,"Toggle",function(v)
     antistomp = v
 end)
 
-combat:Button('Godmode (DONT USE WHEN KNOCKED)',function()
-    repeat wait() until KO.Value == false
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/cjdjmj/untitledhoodscript/main/README.md", true))()
+combat:Button('Godmode (PATCHED AGAIN)',function()
 end)
 
 
