@@ -157,8 +157,8 @@ function check()
         chr.Humanoid:EquipTool(player.Backpack:FindFirstChild('[Double-Barrel SG]'))
     end
     if chr:FindFirstChild("[Double-Barrel SG]") then
-        if player.DataFolder.Inventory["[Double-Barrel SG]"].Value == 0 then
-            chr:BreakJoints()
+        if player.DataFolder.Inventory["[Double-Barrel SG]"].Value == "0" then
+            chr.Humanoid.Health = 0
         end
         VirtualInputManager:SendKeyEvent(true, "R", false, game)
         task.wait(0.05)
