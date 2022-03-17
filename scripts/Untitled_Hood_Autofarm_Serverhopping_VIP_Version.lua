@@ -1,4 +1,4 @@
-getgenv().serverhop = true
+
 repeat task.wait() until game:IsLoaded()
 pcall(function()
     repeat wait() until game.Players.LocalPlayer.Character:FindFirstChild('FULLY_LOADED_CHAR')
@@ -113,29 +113,12 @@ function ATM()
             end
         end
     end
-    if getgenv().serverhop then
-        game:Shutdown()
-    else 
-        ATM() 
-    end
+    game:ShutDown()
 end
 
 player.CharacterAdded:Connect(function() ATM() end)
 aad = false
 function check()
-    if not player.Backpack:FindFirstChild('Mask') and not chr:FindFirstChild("Mask") then
-        repeat
-            task.wait(0.3)
-            pcall(function()
-            chr.HumanoidRootPart.CFrame = workspace.Ignored.Shop["[Surgeon Mask] - $25"].Head.CFrame + Vector3.new(0, 5, 0)
-            end)
-            task.wait(0.3)
-            fireclickdetector( workspace.Ignored.Shop["[Surgeon Mask] - $25"].ClickDetector)
-        until player.Backpack:FindFirstChild('Mask')
-        chr.Humanoid:EquipTool(player.Backpack["Mask"])
-        task.wait(0.1)
-        m1click()
-    end
     if not player.Backpack:FindFirstChild('[Double-Barrel SG]') and not chr:FindFirstChild("[Double-Barrel SG]") then
         repeat
             task.wait(0.3)
