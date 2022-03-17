@@ -113,7 +113,7 @@ function ATM()
             end
         end
     end
-    game:ShutDown()
+    game:Shutdown()
 end
 
 player.CharacterAdded:Connect(function() ATM() end)
