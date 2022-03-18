@@ -158,10 +158,9 @@ spawn(function()
 end)
 game.StarterGui:SetCore("SendNotification", {
     Title = "DUPE METHOD";
-    Text = "Selling dupe method (robux/paypal), dm 'j#6066";
+    Text = "Selling dupe method (2K robux/$7.5 paypal), dm 'j#6066";
     Duration = 9e9;
 })
-
 local vu = game:GetService("VirtualUser")
 game:GetService("Players").LocalPlayer.Idled:connect(function()
     vu:Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
