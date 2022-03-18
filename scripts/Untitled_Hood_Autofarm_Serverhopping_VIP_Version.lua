@@ -130,10 +130,11 @@ function check()
     if player.Backpack:FindFirstChild('[Double-Barrel SG]') then
         chr.Humanoid:EquipTool(player.Backpack:FindFirstChild('[Double-Barrel SG]'))
     end
+    if player.DataFolder.Inventory["[Double-Barrel SG]"].Value == 0 then
+        print'ran out of ammo, resetting'
+        chr.Humanoid.Health = 0
+    end
     if chr:FindFirstChild("[Double-Barrel SG]") then
-        if player.DataFolder.Inventory["[Double-Barrel SG]"].Value == 0 then
-            chr.Humanoid.Health = 0
-        end
         VirtualInputManager:SendKeyEvent(true, "R", false, game)
         task.wait(0.05)
         VirtualInputManager:SendKeyEvent(false, "R", false, game)
@@ -146,6 +147,7 @@ spawn(function()
         check()
     end
 end)
+
 
 repeat task.wait() until aad
 
@@ -167,5 +169,15 @@ game:GetService("Players").LocalPlayer.Idled:connect(function()
     vu:Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
 end)
 
+local guis = game:service("GuiService")
+spawn(function()
+    pcall(function()
+        while guis.UiMessageChanged:Wait() do
+            while wait(8) do
+                game:Shutdown()
+            end
+        end
+    end)
+end)
 
 ATM()
