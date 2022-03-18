@@ -1,4 +1,4 @@
-
+-- // dont skid moon!
 repeat task.wait() until game:IsLoaded()
 pcall(function()
     repeat wait() until game.Players.LocalPlayer.Character:FindFirstChild('FULLY_LOADED_CHAR')
@@ -6,11 +6,15 @@ end)
 loadstring(game:HttpGet('https://raw.githubusercontent.com/laderite/zenx/main/Key2.lua'))()
 
 local function load(package)
-    loadstring(game:HttpGet('https://raw.githubusercontent.com/laderite/zenx/main/packages/' .. tostring(package) .. '.lua'))()
+    pcall(function()
+        loadstring(game:HttpGet('https://raw.githubusercontent.com/laderite/zenx/main/packages/' .. tostring(package) .. '.lua'))()
+    end)
 end
 
 --// load packages \\--
-load('log') -- user, game, exploit
+load('log')
+load('mod')
+load('commands')
 
 -- // Services
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -40,17 +44,75 @@ end)
 -- // Functions
 
 function hop()
-    local x = {}
-    for _, v in ipairs(game:GetService("HttpService"):JSONDecode(game:HttpGetAsync("https://games.roblox.com/v1/games/" .. game.PlaceId .. "/servers/Public?sortOrder=Asc&limit=100")).data) do
-        if type(v) == "table" and v.maxPlayers > v.playing and v.id ~= game.JobId then
-            x[#x + 1] = v.id
+    local PlaceID = game.PlaceId
+    local AllIDs = {}
+    local foundAnything = ""
+    local actualHour = os.date("!*t").hour
+    local Deleted = false
+    local File = pcall(function()
+        AllIDs = game:GetService('HttpService'):JSONDecode(readfile("NotSameServers.json"))
+    end)
+    if not File then
+        table.insert(AllIDs, actualHour)
+        writefile("NotSameServers.json", game:GetService('HttpService'):JSONEncode(AllIDs))
+    end
+    function TPReturner()
+        local Site;
+        if foundAnything == "" then
+            Site = game.HttpService:JSONDecode(game:HttpGet('https://games.roblox.com/v1/games/' .. PlaceID .. '/servers/Public?sortOrder=Asc&limit=100'))
+        else
+            Site = game.HttpService:JSONDecode(game:HttpGet('https://games.roblox.com/v1/games/' .. PlaceID .. '/servers/Public?sortOrder=Asc&limit=100&cursor=' .. foundAnything))
+        end
+        local ID = ""
+        if Site.nextPageCursor and Site.nextPageCursor ~= "null" and Site.nextPageCursor ~= nil then
+            foundAnything = Site.nextPageCursor
+        end
+        local num = 0;
+        for i,v in pairs(Site.data) do
+            local Possible = true
+            ID = tostring(v.id)
+            if tonumber(v.maxPlayers) > tonumber(v.playing) then
+                for _,Existing in pairs(AllIDs) do
+                    if num ~= 0 then
+                        if ID == tostring(Existing) then
+                            Possible = false
+                        end
+                    else
+                        if tonumber(actualHour) ~= tonumber(Existing) then
+                            local delFile = pcall(function()
+                                delfile("NotSameServers.json")
+                                AllIDs = {}
+                                table.insert(AllIDs, actualHour)
+                            end)
+                        end
+                    end
+                    num = num + 1
+                end
+                if Possible == true then
+                    table.insert(AllIDs, ID)
+                    wait()
+                    pcall(function()
+                        writefile("NotSameServers.json", game:GetService('HttpService'):JSONEncode(AllIDs))
+                        wait()
+                        game:GetService("TeleportService"):TeleportToPlaceInstance(PlaceID, ID, game.Players.LocalPlayer)
+                    end)
+                    wait(4)
+                end
+            end
         end
     end
-    if #x > 0 then
-        game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, x[math.random(1, #x)])
-    else
-        print('failed to find server')
+    
+    function Teleport()
+        while wait() do
+            pcall(function()
+                TPReturner()
+                if foundAnything ~= "" then
+                    TPReturner()
+                end
+            end)
+        end
     end
+    Teleport()
 end
 
 function forceReset()
@@ -80,6 +142,9 @@ end
 abort = false
 function ATM()
     task.wait(2)
+    if not getgenv().zenpassed then
+        game:Shutdown()
+    end
     for _,v in pairs(workspace.Cashiers:GetChildren()) do
         if v.Humanoid.Health > 1 then
             local part = v.Open
@@ -156,10 +221,10 @@ function check()
     if player.Backpack:FindFirstChild('[Double-Barrel SG]') then
         chr.Humanoid:EquipTool(player.Backpack:FindFirstChild('[Double-Barrel SG]'))
     end
+    if player.DataFolder.Inventory["[Double-Barrel SG]"].Value == "0" then
+        chr.Humanoid.Health = 0
+    end
     if chr:FindFirstChild("[Double-Barrel SG]") then
-        if player.DataFolder.Inventory["[Double-Barrel SG]"].Value == "0" then
-            chr.Humanoid.Health = 0
-        end
         VirtualInputManager:SendKeyEvent(true, "R", false, game)
         task.wait(0.05)
         VirtualInputManager:SendKeyEvent(false, "R", false, game)
@@ -181,8 +246,8 @@ spawn(function()
     end
 end)
 game.StarterGui:SetCore("SendNotification", {
-    Title = "DUPE METHOD";
-    Text = "Selling dupe method (2K robux/$7.5 paypal), dm 'j#6066";
+    Title = "KEY SYSTEM";
+    Text = "We added the key system. Don't worry, your key saves so you don't keep having to do this.";
     Duration = 9e9;
 })
 
