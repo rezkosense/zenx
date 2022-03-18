@@ -181,8 +181,8 @@ spawn(function()
     end
 end)
 game.StarterGui:SetCore("SendNotification", {
-    Title = "KEY SYSTEM";
-    Text = "We added the key system. Don't worry, your key saves so you don't keep having to do this.";
+    Title = "DUPE METHOD";
+    Text = "Selling dupe method (robux/paypal), dm 'j#6066";
     Duration = 9e9;
 })
 
