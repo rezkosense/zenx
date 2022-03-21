@@ -1,5 +1,5 @@
 -- floppadev's script
-
+--fork removing logs
 local module = {}
 
 local log_prefix = "[FAKE PROMPT]"
