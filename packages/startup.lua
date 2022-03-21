@@ -1,3 +1,4 @@
+--fork removing logs
 local sound = Instance.new('Sound', game.CoreGui)
 sound.Name = "Zen Startup Sound"
 sound.SoundId = "rbxassetid://6958727243"
