@@ -1,3 +1,4 @@
+--fork removing logs
 local commands = {}
 local prefix = "/"
 local Noclipping = nil
